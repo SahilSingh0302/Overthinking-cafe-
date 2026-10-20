@@ -1,0 +1,4603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overthinker Café · Liquid Motivation & Specialty Coffee</title>
+  <meta name="description" content="A playful, student-run specialty espresso and matcha bar for people with 47 open browser tabs.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- Razorpay secure checkout (only used when payments are configured) -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+
+  <style>
+    /* ==========================================================================
+       OVERTHINKER CAFÉ · DESIGN SYSTEM & CSS VARIABLES
+       ========================================================================== */
+    :root {
+      /* Brand Palette */
+      --color-matcha: #43aa8b;
+      --color-matcha-light: #d8f3dc;
+      --color-matcha-dark: #2d6a4f;
+      --color-bubblegum: #ff6b8b;
+      --color-bubblegum-light: #ffe5ec;
+      --color-yellow: #ffd166;
+      --color-yellow-light: #fff3cd;
+      --color-lilac: #cdb4db;
+      --color-lilac-light: #f3ebf9;
+
+      /* Light Theme */
+      --bg-base: #faf7f2;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-muted: #f4efe6;
+      --bg-tape: rgba(255, 230, 109, 0.7);
+      --border-ink: #20150f;
+      --text-main: #20150f;
+      --text-muted: #6e645f;
+      --text-invert: #faf7f2;
+      --shadow-solid: 4px 4px 0px #20150f;
+      --shadow-solid-sm: 2px 2px 0px #20150f;
+      --shadow-solid-lg: 7px 7px 0px #20150f;
+      --shadow-hover: 6px 6px 0px #20150f;
+      --paper-grid: radial-gradient(#d3cbbe 1px, transparent 1px);
+      --header-bg: rgba(250, 247, 242, 0.95);
+
+      /* Typography */
+      --font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+      /* Layout */
+      --container-max: 1180px;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --transition-pop: 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      --transition-smooth: 0.25s ease;
+    }
+
+    /* Dark Mode */
+    [data-theme="dark"] {
+      --bg-base: #17120e;
+      --bg-surface: #221b16;
+      --bg-card: #251d18;
+      --bg-card-muted: #2f251f;
+      --bg-tape: rgba(255, 209, 102, 0.45);
+      --border-ink: #f0e6d6;
+      --text-main: #f5ede1;
+      --text-muted: #b5a89e;
+      --text-invert: #17120e;
+      --shadow-solid: 4px 4px 0px #f0e6d6;
+      --shadow-solid-sm: 2px 2px 0px #f0e6d6;
+      --shadow-solid-lg: 6px 6px 0px #f0e6d6;
+      --shadow-hover: 6px 6px 0px #ffd166;
+      --paper-grid: radial-gradient(#3a2e26 1px, transparent 1px);
+      --header-bg: rgba(23, 18, 14, 0.95);
+      --color-matcha-light: #204133;
+      --color-bubblegum-light: #44212b;
+      --color-yellow-light: #3d3319;
+      --color-lilac-light: #35263d;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      background-image: var(--paper-grid);
+      background-size: 24px 24px;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color var(--transition-smooth), color var(--transition-smooth);
+    }
+
+    img, svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--color-bubblegum);
+      outline-offset: 3px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    /* Zine sticker & badge utilities */
+    .sticker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--border-ink);
+      box-shadow: var(--shadow-solid-sm);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .sticker-yellow { background: var(--color-yellow); color: #20150f; }
+    .sticker-pink { background: var(--color-bubblegum); color: #ffffff; }
+    .sticker-matcha { background: var(--color-matcha); color: #ffffff; }
+    .sticker-lilac { background: var(--color-lilac); color: #20150f; }
+
+    .tape-corner {
+      position: absolute;
+      width: 65px;
+      height: 20px;
+      background: var(--bg-tape);
+      top: -10px;
+      left: 20px;
+      transform: rotate(-3deg);
+      border-left: 2px dashed rgba(32, 21, 15, 0.25);
+      border-right: 2px dashed rgba(32, 21, 15, 0.25);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+      text-transform: none;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-matcha);
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 0.75rem;
+      font-weight: 800;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 600px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.75rem;
+      background: var(--color-matcha);
+      color: #ffffff;
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      transition: transform var(--transition-pop), box-shadow var(--transition-pop);
+    }
+
+    .btn-primary:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .btn-primary:active {
+      transform: translate(2px, 2px);
+      box-shadow: var(--shadow-solid-sm);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.6rem;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      transition: transform var(--transition-pop), box-shadow var(--transition-pop);
+    }
+
+    .btn-secondary:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* Site Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--header-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--border-ink);
+      padding: 0.75rem 0;
+      transition: background-color var(--transition-smooth);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo svg {
+      width: 36px;
+      height: 36px;
+      transform: rotate(-4deg);
+      transition: transform var(--transition-pop);
+    }
+
+    .brand-logo:hover svg {
+      transform: rotate(8deg) scale(1.1);
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -0.04em;
+    }
+
+    .header-live-pill {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      background: var(--bg-surface);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    @media (min-width: 990px) {
+      .header-live-pill {
+        display: inline-flex;
+      }
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulseGreen 2s infinite;
+    }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Currency & Language Selectors */
+    .header-select {
+      padding: 0.45rem 0.65rem;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.84rem;
+      cursor: pointer;
+      outline: none;
+      transition: transform var(--transition-pop), box-shadow var(--transition-pop);
+    }
+
+    .header-select:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-solid);
+    }
+
+    .header-select:focus-visible {
+      outline: 3px solid var(--color-bubblegum);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 680px) {
+      .header-select {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.78rem;
+      }
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--border-ink);
+      background: var(--bg-surface);
+      box-shadow: var(--shadow-solid-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--transition-pop), box-shadow var(--transition-pop);
+    }
+
+    .btn-icon:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-solid);
+    }
+
+    .cart-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.45rem 0.95rem;
+      background: var(--color-yellow);
+      color: #20150f;
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: transform var(--transition-pop), box-shadow var(--transition-pop);
+    }
+
+    .cart-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-solid);
+    }
+
+    .cart-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      background: var(--color-bubblegum);
+      color: #ffffff;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 800;
+      border: 1.5px solid var(--border-ink);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 3.5rem 0 2.5rem;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    @media (min-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 3.5rem;
+      }
+    }
+
+    .hero-stickers-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-headline {
+      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.02;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-headline mark {
+      background: var(--color-yellow);
+      color: #20150f;
+      padding: 0.1em 0.25em;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--border-ink);
+      display: inline-block;
+      transform: rotate(-1.5deg);
+      box-shadow: var(--shadow-solid-sm);
+    }
+
+    .hero-lead {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 520px;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero-quick-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .hero-art-box {
+      position: relative;
+      background: var(--bg-card);
+      border: 3px solid var(--border-ink);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 1.5rem;
+      box-shadow: var(--shadow-solid-lg);
+      text-align: center;
+      transform: rotate(1deg);
+      transition: transform var(--transition-pop);
+    }
+
+    .hero-art-box:hover {
+      transform: rotate(0deg) scale(1.01);
+    }
+
+    .mascot-container {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 1.25rem;
+      position: relative;
+    }
+
+    .steam-line {
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      animation: steamRise 3s ease-in-out infinite;
+    }
+
+    .steam-2 { animation-delay: 0.8s; }
+    .steam-3 { animation-delay: 1.6s; }
+
+    @keyframes steamRise {
+      0% { stroke-dashoffset: 60; opacity: 0; transform: translateY(0); }
+      30% { opacity: 0.8; }
+      80% { opacity: 0.4; }
+      100% { stroke-dashoffset: 0; opacity: 0; transform: translateY(-16px); }
+    }
+
+    .cup-bob {
+      animation: cupFloat 4s ease-in-out infinite alternate;
+      transform-origin: center bottom;
+    }
+
+    @keyframes cupFloat {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1.5deg); }
+      100% { transform: translateY(0) rotate(-1.5deg); }
+    }
+
+    .slapped-sticker {
+      position: fixed;
+      z-index: 80;
+      cursor: grab;
+      user-select: none;
+      animation: stampPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      filter: drop-shadow(3px 3px 0px var(--border-ink));
+    }
+
+    .slapped-sticker:active {
+      cursor: grabbing;
+      transform: scale(0.95);
+    }
+
+    .sticker-pill-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .clickable-sticker {
+      cursor: pointer;
+      transition: transform var(--transition-pop);
+      padding: 0.35rem 0.85rem;
+      font-size: 0.82rem;
+    }
+
+    .clickable-sticker:hover {
+      transform: scale(1.12) rotate(3deg);
+    }
+
+    /* Section 2: Mood Picker */
+    .mood-section {
+      padding: 3rem 0;
+    }
+
+    .mood-card {
+      background: var(--bg-card);
+      border: 3px solid var(--border-ink);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 1.75rem;
+      box-shadow: var(--shadow-solid-lg);
+      position: relative;
+    }
+
+    .mood-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .mood-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--bg-card-muted);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: all var(--transition-pop);
+    }
+
+    .mood-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-solid);
+    }
+
+    .mood-btn.active {
+      background: var(--color-yellow);
+      color: #20150f;
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-solid);
+    }
+
+    .mood-suggestions-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (min-width: 768px) {
+      .mood-suggestions-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .mood-item-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-solid-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform var(--transition-pop), box-shadow var(--transition-pop);
+    }
+
+    .mood-item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-solid);
+    }
+
+    .mood-item-top {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .mood-item-icon {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      background: var(--bg-card-muted);
+      border: 1.5px solid var(--border-ink);
+      border-radius: var(--radius-sm);
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .mood-item-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .mood-item-reason {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.35;
+    }
+
+    .mood-item-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.75rem;
+      border-top: 1.5px dashed var(--border-ink);
+      margin-top: 0.5rem;
+    }
+
+    .mood-price {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .btn-add-quick {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.95rem;
+      background: var(--color-bubblegum);
+      color: #ffffff;
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: transform var(--transition-pop);
+    }
+
+    .btn-add-quick:hover { transform: scale(1.06); }
+
+    /* Section 3: Menu */
+    .menu-section {
+      padding: 3.5rem 0;
+    }
+
+    .menu-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-bottom: 2.25rem;
+    }
+
+    @media (min-width: 820px) {
+      .menu-controls {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .category-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .category-btn {
+      padding: 0.55rem 1.1rem;
+      background: var(--bg-card);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all var(--transition-pop);
+    }
+
+    .category-btn.active {
+      background: var(--color-matcha);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-solid);
+    }
+
+    .menu-filters {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .search-wrapper {
+      position: relative;
+      min-width: 200px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.55rem 0.85rem 0.55rem 2.25rem;
+      background: var(--bg-card);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-size: 0.9rem;
+      transition: box-shadow var(--transition-pop);
+    }
+
+    .search-input:focus {
+      outline: none;
+      box-shadow: var(--shadow-solid);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--text-muted);
+    }
+
+    .vegan-toggle-btn, .roulette-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      background: var(--bg-card);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.88rem;
+      transition: all var(--transition-pop);
+      cursor: pointer;
+    }
+
+    .vegan-toggle-btn.active {
+      background: var(--color-matcha-light);
+      border-color: var(--color-matcha-dark);
+      color: var(--color-matcha-dark);
+      box-shadow: var(--shadow-solid);
+    }
+
+    .roulette-btn:hover {
+      background: var(--color-yellow);
+      transform: scale(1.05);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .menu-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .menu-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-md);
+      padding: 1.35rem;
+      box-shadow: var(--shadow-solid);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform var(--transition-pop), box-shadow var(--transition-pop), border-color 0.3s;
+    }
+
+    .menu-card:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .menu-card.highlight-flash {
+      border-color: var(--color-bubblegum) !important;
+      animation: pulseHighlight 1.5s ease-in-out;
+    }
+
+    @keyframes pulseHighlight {
+      0%, 100% { box-shadow: var(--shadow-solid); }
+      50% { box-shadow: 0 0 20px var(--color-bubblegum); transform: scale(1.03); }
+    }
+
+    .menu-card-top {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .menu-card-icon {
+      width: 58px;
+      height: 58px;
+      flex-shrink: 0;
+      background: var(--bg-card-muted);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+
+    .menu-card-meta { flex: 1; }
+
+    .menu-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .menu-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-ink);
+      font-family: var(--font-display);
+    }
+
+    .tag-vegan { background: var(--color-matcha-light); color: var(--color-matcha-dark); }
+    .tag-bestseller { background: var(--color-yellow); color: #20150f; }
+    .tag-new { background: var(--color-bubblegum-light); color: var(--color-bubblegum); }
+    .tag-spicy { background: #ffe3e3; color: #d90429; }
+
+    .menu-card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      line-height: 1.25;
+    }
+
+    .menu-card-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 1.25rem;
+      flex: 1;
+    }
+
+    .menu-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.85rem;
+      border-top: 1.5px dashed var(--border-ink);
+    }
+
+    .menu-card-price {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .btn-add-cart {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1.15rem;
+      background: var(--color-yellow);
+      color: #20150f;
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: transform var(--transition-pop);
+    }
+
+    .btn-add-cart:hover {
+      transform: scale(1.05);
+      background: var(--color-bubblegum);
+      color: #ffffff;
+    }
+
+    .menu-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 1rem;
+      background: var(--bg-card);
+      border: 2px dashed var(--border-ink);
+      border-radius: var(--radius-lg);
+    }
+
+    /* Section 5: Drink Lab */
+    .builder-section {
+      padding: 3.5rem 0;
+    }
+
+    .builder-container {
+      background: var(--bg-card);
+      border: 3px solid var(--border-ink);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 1.75rem;
+      box-shadow: var(--shadow-solid-lg);
+      position: relative;
+    }
+
+    .builder-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      margin-top: 2rem;
+      align-items: center;
+    }
+
+    @media (min-width: 900px) {
+      .builder-grid {
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 3.5rem;
+      }
+    }
+
+    .visualizer-preview-box {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-md);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-solid);
+      position: relative;
+    }
+
+    .temp-toggle-bar {
+      display: inline-flex;
+      background: var(--bg-card-muted);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      padding: 4px;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-solid-sm);
+    }
+
+    .temp-toggle-btn {
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-full);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: all var(--transition-pop);
+    }
+
+    .temp-toggle-btn.active {
+      background: var(--color-yellow);
+      color: #20150f;
+      border: 1.5px solid var(--border-ink);
+      box-shadow: var(--shadow-solid-sm);
+    }
+
+    .visualizer-cup-svg {
+      width: 100%;
+      max-width: 230px;
+      height: 270px;
+      margin: 0 auto 1.25rem;
+    }
+
+    .live-drink-summary {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+    }
+
+    .live-drink-details {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .vibe-meter-box {
+      background: var(--bg-card-muted);
+      border: 1.5px solid var(--border-ink);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+
+    .vibe-stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+
+    .live-price-pill {
+      display: inline-block;
+      padding: 0.4rem 1.25rem;
+      background: var(--color-yellow);
+      color: #20150f;
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.3rem;
+    }
+
+    .builder-group {
+      margin-bottom: 1.35rem;
+    }
+
+    .builder-label {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.65rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .builder-options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    .option-pill-btn {
+      padding: 0.55rem 1rem;
+      background: var(--bg-card-muted);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all var(--transition-pop);
+      cursor: pointer;
+    }
+
+    .option-pill-btn:hover { transform: translateY(-2px); }
+
+    .option-pill-btn.active {
+      background: var(--color-bubblegum);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-solid);
+    }
+
+    .builder-checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.65rem;
+    }
+
+    @media (min-width: 500px) {
+      .builder-checkbox-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .addon-check-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0.85rem;
+      background: var(--bg-card-muted);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      user-select: none;
+      transition: background var(--transition-pop);
+    }
+
+    .addon-check-label:hover { background: var(--bg-surface); }
+
+    .addon-check-label input {
+      margin-right: 0.5rem;
+      accent-color: var(--color-bubblegum);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Section 6: Loyalty Stamp Card */
+    .loyalty-section {
+      padding: 3.5rem 0;
+    }
+
+    .stamp-card-wrapper {
+      background: #fdfaf5;
+      color: #20150f;
+      border: 3px solid #20150f;
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 1.75rem;
+      box-shadow: var(--shadow-solid-lg);
+      position: relative;
+      background-image: radial-gradient(#e5dfd3 1.5px, transparent 1.5px);
+      background-size: 18px 18px;
+    }
+
+    .stamp-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+      max-width: 640px;
+    }
+
+    @media (max-width: 540px) {
+      .stamp-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stamp-slot {
+      aspect-ratio: 1;
+      border: 2.5px dashed #20150f;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform var(--transition-pop);
+    }
+
+    .stamp-slot.stamped {
+      border: 2.5px solid #20150f;
+      background: var(--color-yellow);
+      animation: stampPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .stamp-slot.free-reward {
+      background: var(--color-bubblegum-light);
+      border-color: var(--color-bubblegum);
+    }
+
+    .stamp-slot.free-reward.stamped {
+      background: var(--color-bubblegum);
+      color: #ffffff;
+    }
+
+    .stamp-number {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #a89f91;
+    }
+
+    .stamp-slot.stamped .stamp-number { display: none; }
+
+    .stamp-mark {
+      display: none;
+      width: 68%;
+      height: 68%;
+    }
+
+    .stamp-slot.stamped .stamp-mark { display: block; }
+
+    @keyframes stampPop {
+      0% { transform: scale(0.6) rotate(-15deg); opacity: 0; }
+      80% { transform: scale(1.18) rotate(5deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .stamp-actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-top: 1.25rem;
+      border-top: 2px dashed #20150f;
+    }
+
+    .free-drink-alert {
+      display: none;
+      padding: 1rem 1.5rem;
+      background: var(--color-matcha);
+      color: #ffffff;
+      border: 2px solid #20150f;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-solid-sm);
+      margin-bottom: 1.5rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      animation: stampPop 0.5s ease;
+    }
+
+    /* Section 7: Wall of Vibes */
+    .vibes-section {
+      padding: 3.5rem 0;
+    }
+
+    .vibes-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+      margin-top: 2rem;
+    }
+
+    @media (min-width: 600px) {
+      .vibes-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 960px) {
+      .vibes-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .polaroid-card {
+      background: #ffffff;
+      color: #20150f;
+      border: 2px solid var(--border-ink);
+      border-radius: 4px;
+      padding: 1rem 1rem 1.5rem;
+      box-shadow: var(--shadow-solid);
+      position: relative;
+      transition: transform var(--transition-pop), box-shadow var(--transition-pop);
+    }
+
+    .polaroid-card:nth-child(1) { transform: rotate(-2deg); }
+    .polaroid-card:nth-child(2) { transform: rotate(1.5deg); }
+    .polaroid-card:nth-child(3) { transform: rotate(-1deg); }
+    .polaroid-card:nth-child(4) { transform: rotate(2.5deg); }
+    .polaroid-card:nth-child(5) { transform: rotate(-1.5deg); }
+    .polaroid-card:nth-child(6) { transform: rotate(1deg); }
+
+    .polaroid-card:hover {
+      transform: rotate(0deg) scale(1.04) translateY(-6px);
+      box-shadow: var(--shadow-hover);
+      z-index: 5;
+    }
+
+    .polaroid-art-frame {
+      width: 100%;
+      height: 200px;
+      background: #f4efe6;
+      border: 1.5px solid #20150f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .polaroid-caption {
+      font-family: 'Space Grotesk', cursive, sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      line-height: 1.25;
+      margin-bottom: 0.35rem;
+    }
+
+    .polaroid-meta {
+      font-size: 0.78rem;
+      color: #7a7068;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Section 8: Our Story */
+    .story-section {
+      padding: 3.5rem 0;
+    }
+
+    .story-zine-box {
+      background: var(--bg-card);
+      border: 3px solid var(--border-ink);
+      border-radius: var(--radius-lg);
+      padding: 2.75rem 2rem;
+      box-shadow: var(--shadow-solid-lg);
+      position: relative;
+    }
+
+    .story-points {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .story-points { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .story-item {
+      position: relative;
+      padding-top: 1rem;
+      border-top: 3px solid var(--border-ink);
+    }
+
+    .story-step-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--color-bubblegum);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .story-item-text {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    /* Section 9: Visit & Contact */
+    .visit-section {
+      padding: 3.5rem 0;
+    }
+
+    .visit-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media (min-width: 860px) {
+      .visit-grid { grid-template-columns: 1.1fr 0.9fr; }
+    }
+
+    .visit-card {
+      background: var(--bg-card);
+      border: 3px solid var(--border-ink);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-solid-lg);
+      position: relative;
+    }
+
+    .hours-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.92rem;
+    }
+
+    .hours-table tr {
+      border-bottom: 1.5px dashed var(--border-ink);
+    }
+
+    .hours-table td { padding: 0.6rem 0; }
+    .hours-table td:last-child { text-align: right; font-weight: 700; }
+
+    .hours-today-row { color: var(--color-matcha-dark); font-weight: 700; }
+    [data-theme="dark"] .hours-today-row { color: var(--color-matcha); }
+
+    .stylized-map-box {
+      width: 100%;
+      height: 220px;
+      background: var(--bg-surface);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      margin-top: 1.25rem;
+    }
+
+    .study-perks-box {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: var(--bg-card-muted);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-md);
+    }
+
+    .wifi-copy-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      background: var(--bg-surface);
+      padding: 0.5rem 0.85rem;
+      border: 1.5px solid var(--border-ink);
+      border-radius: var(--radius-sm);
+    }
+
+    .wifi-code {
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .btn-copy {
+      padding: 0.35rem 0.75rem;
+      background: var(--color-yellow);
+      border: 1.5px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.78rem;
+      transition: transform var(--transition-pop);
+    }
+
+    .btn-copy:hover { transform: scale(1.05); }
+
+    .social-links-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1.15rem;
+      background: var(--bg-surface);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.88rem;
+      transition: transform var(--transition-pop);
+    }
+
+    .social-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-solid);
+    }
+
+    /* Section 10: Footer */
+    .site-footer {
+      border-top: 3px solid var(--border-ink);
+      background: var(--bg-card);
+      padding: 4rem 0 2.5rem;
+      margin-top: 4rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    @media (min-width: 768px) {
+      .footer-grid { grid-template-columns: 1.2fr 0.8fr; }
+    }
+
+    .newsletter-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1rem;
+      max-width: 440px;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.75rem 1.15rem;
+      background: var(--bg-surface);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-size: 0.95rem;
+    }
+
+    .newsletter-btn {
+      padding: 0.75rem 1.5rem;
+      background: var(--color-matcha);
+      color: #ffffff;
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      transition: transform var(--transition-pop);
+    }
+
+    .newsletter-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-solid);
+    }
+
+    .ai-transparency-card {
+      background: var(--bg-card-muted);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .footer-bottom {
+      padding-top: 2rem;
+      border-top: 1.5px dashed var(--border-ink);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Section 4: Order Drawer */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(32, 21, 15, 0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .order-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-card);
+      border-left: 3px solid var(--border-ink);
+      z-index: 1001;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 24px rgba(0,0,0,0.15);
+    }
+
+    .drawer-backdrop.open .order-drawer { transform: translateX(0); }
+
+    .drawer-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 2px solid var(--border-ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card-muted);
+    }
+
+    .drawer-title { font-size: 1.35rem; font-weight: 800; }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
+
+    .cart-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .cart-item {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      box-shadow: var(--shadow-solid-sm);
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .cart-item-title {
+      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 0.98rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .cart-item-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .qty-stepper {
+      display: inline-flex;
+      align-items: center;
+      border: 1.5px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      background: var(--bg-card-muted);
+    }
+
+    .qty-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      background: var(--bg-surface);
+      transition: background 0.15s;
+    }
+
+    .qty-btn:hover { background: var(--color-yellow); }
+
+    .qty-val {
+      min-width: 28px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
+    .cart-item-price-side {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cart-item-total {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+
+    .cart-remove-btn {
+      color: #e63946;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .cart-empty-box {
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+
+    .cart-empty-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin: 1rem 0 0.5rem;
+    }
+
+    .cart-empty-lead {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dog-tip-box {
+      margin-top: 1.25rem;
+      padding: 0.85rem;
+      background: var(--color-yellow-light);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .drawer-form-box {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 2px dashed var(--border-ink);
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .drawer-input {
+      width: 100%;
+      padding: 0.65rem 0.95rem;
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      font-size: 0.9rem;
+    }
+
+    .drawer-footer {
+      padding: 1.25rem 1.5rem;
+      border-top: 2px solid var(--border-ink);
+      background: var(--bg-card-muted);
+    }
+
+    .drawer-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+
+    .btn-checkout {
+      width: 100%;
+      padding: 0.95rem;
+      background: var(--color-matcha);
+      color: #ffffff;
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+      transition: transform var(--transition-pop);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-checkout:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .order-success-view {
+      display: none;
+      text-align: center;
+      padding: 1.5rem 0.5rem;
+    }
+
+    .order-ticket-card {
+      background: var(--color-yellow-light);
+      border: 2px solid var(--border-ink);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin: 1.25rem 0;
+      box-shadow: var(--shadow-solid-sm);
+    }
+
+    .order-num-big {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--color-matcha-dark);
+      letter-spacing: -0.02em;
+    }
+
+    .live-tracker-stepper {
+      margin: 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      text-align: left;
+    }
+
+    .tracker-step {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.55rem 0.85rem;
+      border: 1.5px solid var(--border-ink);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      font-size: 0.85rem;
+      font-weight: 600;
+      opacity: 0.45;
+      transition: all 0.3s;
+    }
+
+    .tracker-step.active {
+      opacity: 1;
+      border-color: var(--color-matcha);
+      background: var(--color-matcha-light);
+      transform: scale(1.02);
+    }
+
+    .tracker-step.completed {
+      opacity: 0.85;
+      background: var(--bg-card-muted);
+      border-color: #10b981;
+    }
+
+    .mobile-order-bar {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.25rem;
+      background: var(--color-yellow);
+      color: #20150f;
+      border: 2.5px solid var(--border-ink);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-solid);
+      font-family: var(--font-display);
+      font-weight: 800;
+      transform: translateY(150%);
+      transition: transform var(--transition-pop);
+    }
+
+    .mobile-order-bar.visible { transform: translateY(0); }
+
+    @media (min-width: 768px) {
+      .mobile-order-bar { display: none !important; }
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 5.5rem;
+      right: 1.5rem;
+      z-index: 1100;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toast {
+      background: var(--border-ink);
+      color: var(--text-invert);
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-full);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      animation: toastIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateY(20px) scale(0.9); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2000;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Container for interactive slapped stickers -->
+  <div id="slapped-stickers-canvas" style="position:relative; z-index:90;"></div>
+
+  <!-- ==========================================================================
+       SITE HEADER
+       ========================================================================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#hero" class="brand-logo" aria-label="Overthinker Café home">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="6" y="14" width="28" height="26" rx="6" fill="#FFD166" stroke="#20150F" stroke-width="3"/>
+          <path d="M34 20H38C41.3137 20 44 22.6863 44 26C44 29.3137 41.3137 32 38 32H34" stroke="#20150F" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="16" cy="26" r="2.5" fill="#20150F"/>
+          <circle cx="24" cy="26" r="2.5" fill="#20150F"/>
+          <path d="M18 32C19 33 21 33 22 32" stroke="#20150F" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 8C12 5 14 5 14 2" stroke="#43AA8B" stroke-width="2.5" stroke-linecap="round" class="steam-line"/>
+          <path d="M20 8C20 5 22 5 22 2" stroke="#43AA8B" stroke-width="2.5" stroke-linecap="round" class="steam-line steam-2"/>
+        </svg>
+        <span class="brand-name" id="cfg-brand-name">Overthinker Café</span>
+      </a>
+
+      <!-- Live hours indicator -->
+      <div class="header-live-pill" id="live-hours-pill">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span id="cfg-header-hours" data-i18n="header_hours">Open today · 7:30am – 9:00pm</span>
+      </div>
+
+      <!-- Header Action Controls -->
+      <div class="header-actions">
+        <!-- Currency Switcher -->
+        <select id="currency-select" class="header-select" aria-label="Select currency">
+          <option value="GBP">£ GBP</option>
+          <option value="USD">$ USD</option>
+          <option value="EUR">€ EUR</option>
+          <option value="JPY">¥ JPY</option>
+          <option value="AUD">A$ AUD</option>
+        </select>
+
+        <!-- Language Switcher -->
+        <select id="language-select" class="header-select" aria-label="Select language">
+          <option value="en">🇬🇧 English</option>
+          <option value="es">🇪🇸 Español</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="de">🇩🇪 Deutsch</option>
+          <option value="ja">🇯🇵 日本語</option>
+        </select>
+
+        <!-- Sound Mute/Unmute Toggle -->
+        <button id="sound-toggle-btn" class="btn-icon" title="Toggle tactile sound effects" aria-label="Toggle sound">
+          <svg id="sound-icon-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <svg id="sound-icon-off" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle dark mode" aria-label="Toggle theme">
+          <svg id="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="moon-icon" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <!-- Cart Trigger -->
+        <button id="cart-drawer-trigger" class="cart-btn" aria-label="View order bag">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span data-i18n="order_btn">Order</span>
+          <span class="cart-badge" id="header-cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ==========================================================================
+       SECTION 1: HERO
+       ========================================================================== -->
+    <section class="hero-section" id="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="hero-stickers-row">
+            <span class="sticker sticker-yellow" data-i18n="hero_badge_student">⚡ Student-run specialty coffee</span>
+            <span class="sticker sticker-matcha" id="cfg-hero-location">📍 Bloomsbury, London</span>
+            <span class="sticker sticker-pink" data-i18n="hero_badge_oat">✨ Oat milk default</span>
+          </div>
+
+          <h1 class="hero-headline" id="hero-headline-el">
+            Pouring liquid motivation for people with <mark>47 open browser tabs</mark>.
+          </h1>
+
+          <p class="hero-lead" data-i18n="hero_lead">
+            Ethically sourced single-origin roasts, Ceremonial Uji matcha, and flaky morning bakes. Made fast so you make your 9am lecture or your next meeting.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="#menu" class="btn-primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span data-i18n="hero_order_cta">Order now</span>
+            </a>
+            <a href="#builder" class="btn-secondary">
+              <span data-i18n="hero_build_cta">Build your drink</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+
+          <div class="hero-quick-meta">
+            <div class="hero-meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span data-i18n="hero_pickup_time">Avg pickup: <strong>4 mins</strong></span>
+            </div>
+            <div class="hero-meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+              <span data-i18n="hero_wifi_spec">Gigabit Wi-Fi & plugs</span>
+            </div>
+            <div class="hero-meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <span data-i18n="hero_dogs">Dogs welcome</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mascot & Sticker Bar -->
+        <div class="hero-art-box">
+          <div class="tape-corner"></div>
+          
+          <div class="mascot-container">
+            <svg viewBox="0 0 240 260" fill="none" xmlns="http://www.w3.org/2000/svg" class="cup-bob">
+              <path d="M90 50C85 30 105 25 95 5" stroke="#43AA8B" stroke-width="4" stroke-linecap="round" class="steam-line"/>
+              <path d="M120 50C115 30 135 25 125 5" stroke="#FF6B8B" stroke-width="4" stroke-linecap="round" class="steam-line steam-2"/>
+              <path d="M150 50C145 30 165 25 155 5" stroke="#FFD166" stroke-width="4" stroke-linecap="round" class="steam-line steam-3"/>
+              
+              <path d="M50 75L70 235C71 243 78 248 86 248H154C162 248 169 243 170 235L190 75H50Z" fill="#FAF7F2" stroke="#20150F" stroke-width="5"/>
+              <rect x="42" y="60" width="156" height="18" rx="5" fill="#20150F"/>
+              <rect x="95" y="52" width="50" height="10" rx="3" fill="#20150F"/>
+              
+              <path d="M58 125L64 185H176L182 125H58Z" fill="#FFD166" stroke="#20150F" stroke-width="4"/>
+              
+              <circle cx="120" cy="155" r="22" fill="#FF6B8B" stroke="#20150F" stroke-width="3"/>
+              <circle cx="112" cy="152" r="3" fill="#20150F"/>
+              <circle cx="128" cy="152" r="3" fill="#20150F"/>
+              <path d="M114 162C117 166 123 166 126 162" stroke="#20150F" stroke-width="2.5" stroke-linecap="round"/>
+              
+              <g transform="translate(145, 175) rotate(12)">
+                <rect x="0" y="0" width="60" height="24" rx="4" fill="#43AA8B" stroke="#20150F" stroke-width="2.5"/>
+                <text x="30" y="16" fill="#FFFFFF" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="10" text-anchor="middle">FRESH ROAST</text>
+              </g>
+            </svg>
+          </div>
+
+          <p class="slappable-stickers-note" style="font-weight: 700; font-size: 0.9rem;">
+            <span data-i18n="hero_sticker_prompt">🏷️ Click any sticker below to slap it onto the screen:</span>
+          </p>
+
+          <div class="sticker-pill-row" id="sticker-bar">
+            <button class="sticker sticker-yellow clickable-sticker" data-text="📚 Final Exam Survivor">📚 Final Exam Survivor</button>
+            <button class="sticker sticker-pink clickable-sticker" data-text="🧋 Cold Foam Fiend">🧋 Cold Foam Fiend</button>
+            <button class="sticker sticker-matcha clickable-sticker" data-text="🧘 Brainrot Antidote">🧘 Brainrot Antidote</button>
+            <button class="sticker sticker-lilac clickable-sticker" data-text="🔋 1% Battery Panic">🔋 1% Battery Panic</button>
+            <button class="sticker sticker-yellow clickable-sticker" data-text="🐶 Waffles Approved">🐶 Waffles Approved</button>
+          </div>
+
+          <div style="margin-top: 0.75rem;">
+            <button id="btn-clear-stickers" style="font-size: 0.78rem; text-decoration: underline; color: var(--text-muted); cursor: pointer;" data-i18n="hero_clear_stickers">
+              Clear slapped stickers
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+       SECTION 2: MOOD PICKER
+       ========================================================================== -->
+    <section class="mood-section" id="mood-picker">
+      <div class="container">
+        <div class="mood-card">
+          <div class="tape-corner"></div>
+
+          <div class="mood-header">
+            <span class="section-eyebrow" data-i18n="mood_eyebrow">Smart Drink Recommender</span>
+            <h2 class="section-title" data-i18n="mood_title">What's your mood right now?</h2>
+            <p class="section-subtitle" data-i18n="mood_sub">Tap how you're feeling and we'll pick the exact potion you need with zero guesswork.</p>
+          </div>
+
+          <div class="mood-tabs" role="tablist" aria-label="Mood options">
+            <button class="mood-btn active" data-mood="energy" role="tab" aria-selected="true">
+              <span>⚡</span>
+              <span data-i18n="mood_energy">Need energy</span>
+            </button>
+            <button class="mood-btn" data-mood="cozy" role="tab" aria-selected="false">
+              <span>🧸</span>
+              <span data-i18n="mood_cozy">Cozy</span>
+            </button>
+            <button class="mood-btn" data-mood="fresh" role="tab" aria-selected="false">
+              <span>🍋</span>
+              <span data-i18n="mood_fresh">Fresh</span>
+            </button>
+            <button class="mood-btn" data-mood="sweet" role="tab" aria-selected="false">
+              <span>🍓</span>
+              <span data-i18n="mood_sweet">Sweet</span>
+            </button>
+          </div>
+
+          <div class="mood-suggestions-grid" id="mood-suggestions-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+       SECTION 3: MENU
+       ========================================================================== -->
+    <section class="menu-section" id="menu">
+      <div class="container">
+        <div style="margin-bottom: 2rem;">
+          <span class="section-eyebrow" data-i18n="menu_eyebrow">The Lineup</span>
+          <h2 class="section-title" data-i18n="menu_title">Handcrafted menu</h2>
+          <p class="section-subtitle" data-i18n="menu_sub">Roasted in small batches, infused with house syrups, and served in compostable cups.</p>
+        </div>
+
+        <div class="menu-controls">
+          <div class="category-tabs" role="tablist" aria-label="Menu categories">
+            <button class="category-btn active" data-category="all" data-i18n="cat_all">All items</button>
+            <button class="category-btn" data-category="coffee" data-i18n="cat_coffee">Coffee & shots</button>
+            <button class="category-btn" data-category="matcha" data-i18n="cat_matcha">Matcha & teas</button>
+            <button class="category-btn" data-category="fizzy" data-i18n="cat_fizzy">Cold & fizzy</button>
+            <button class="category-btn" data-category="food" data-i18n="cat_food">Bakes & toasties</button>
+          </div>
+
+          <div class="menu-filters">
+            <button class="roulette-btn" id="btn-surprise-me" title="Spin random drink selection">
+              <span>🎲</span>
+              <span data-i18n="surprise_me">Surprise me!</span>
+            </button>
+
+            <button class="vegan-toggle-btn" id="vegan-filter-btn" aria-pressed="false">
+              <span>🌱</span>
+              <span data-i18n="vegan_only">Vegan only</span>
+            </button>
+
+            <div class="search-wrapper">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="menu-search-input" class="search-input" placeholder="Search menu items..." aria-label="Search menu" data-i18n-ph="search_placeholder">
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-grid" id="menu-grid-container"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+       SECTION 5: BUILD YOUR OWN DRINK (LAB)
+       ========================================================================== -->
+    <section class="builder-section" id="builder">
+      <div class="container">
+        <div class="builder-container">
+          <div class="tape-corner"></div>
+
+          <div class="section-header">
+            <span class="section-eyebrow" data-i18n="builder_eyebrow">The Drink Lab</span>
+            <h2 class="section-title" data-i18n="builder_title">Build your own drink</h2>
+            <p class="section-subtitle" data-i18n="builder_sub">Engineer your exact caffeine formula. Switch between hot or iced, tweak layers, and watch your cup update live.</p>
+          </div>
+
+          <div class="builder-grid">
+            <div class="visualizer-preview-box">
+              <div class="temp-toggle-bar">
+                <button class="temp-toggle-btn active" id="btn-temp-iced" data-temp="iced" data-i18n="btn_iced">🧊 Chilled Iced</button>
+                <button class="temp-toggle-btn" id="btn-temp-hot" data-temp="hot" data-i18n="btn_hot">🔥 Steamy Hot</button>
+              </div>
+
+              <div class="visualizer-cup-svg">
+                <!-- ICED CUP SVG -->
+                <svg viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg" id="custom-cup-svg-iced">
+                  <path d="M45 40L65 240H135L155 40H45Z" fill="#F4EFE6" stroke="#20150F" stroke-width="4"/>
+                  <path id="cup-milk-layer" d="M57 120L65 240H135L143 120H57Z" fill="#FAF7F2" opacity="0.95"/>
+                  <path id="cup-espresso-layer" d="M52 80L57 120H143L148 80H52Z" fill="#6F4E37" opacity="0.9"/>
+                  <path id="cup-foam-layer" d="M48 50C48 50 70 42 100 45C130 48 152 50 152 50L148 80H52L48 50Z" fill="#FFF9ED" stroke="#20150F" stroke-width="2"/>
+                  <g id="cup-drizzle-layer" style="display:none;">
+                    <path d="M60 52Q80 65 100 52T140 52" stroke="#E07A5F" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M70 60Q90 72 110 60T130 60" stroke="#E07A5F" stroke-width="3" stroke-linecap="round"/>
+                  </g>
+                  <g id="cup-ice-cubes">
+                    <rect x="75" y="140" width="22" height="22" rx="4" fill="#FFFFFF" opacity="0.6" stroke="#20150F" stroke-width="1.5" transform="rotate(15 86 151)"/>
+                    <rect x="105" y="165" width="20" height="20" rx="4" fill="#FFFFFF" opacity="0.6" stroke="#20150F" stroke-width="1.5" transform="rotate(-10 115 175)"/>
+                  </g>
+                  <rect x="110" y="5" width="10" height="150" rx="4" fill="#FF6B8B" stroke="#20150F" stroke-width="2.5" transform="rotate(8 115 80)"/>
+                  <rect x="40" y="34" width="120" height="10" rx="3" fill="#20150F"/>
+                </svg>
+
+                <!-- HOT CERAMIC MUG SVG -->
+                <svg viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg" id="custom-cup-svg-hot" style="display:none;">
+                  <path d="M80 30C75 15 90 10 85 0" stroke="#43AA8B" stroke-width="3" stroke-linecap="round" class="steam-line"/>
+                  <path d="M110 30C105 15 120 10 115 0" stroke="#FF6B8B" stroke-width="3" stroke-linecap="round" class="steam-line steam-2"/>
+                  <path d="M40 50H150V160C150 190 125 210 95 210C65 210 40 190 40 160V50Z" fill="#FAF7F2" stroke="#20150F" stroke-width="4.5"/>
+                  <path d="M150 75H175C186 75 195 84 195 95V135C195 146 186 155 175 155H150" stroke="#20150F" stroke-width="4.5" stroke-linecap="round"/>
+                  <ellipse cx="95" cy="55" rx="50" ry="16" fill="#6F4E37" id="hot-drink-surface" stroke="#20150F" stroke-width="2.5"/>
+                  <path d="M95 50C91 43 82 46 86 54C90 62 95 67 95 67C95 67 100 62 104 54C108 46 99 43 95 50Z" fill="#FFF9ED"/>
+                </svg>
+              </div>
+
+              <div class="live-drink-summary" id="custom-drink-name">Regular Iced Oat Latte</div>
+              <div class="live-drink-details" id="custom-drink-specs">12oz · Barista Oat · Double Shot</div>
+
+              <div class="vibe-meter-box">
+                <div class="vibe-stat-row">
+                  <span data-i18n="caffeine_est">⚡ Estimated Caffeine:</span>
+                  <strong id="vibe-caffeine-val">130 mg</strong>
+                </div>
+                <div class="vibe-stat-row">
+                  <span data-i18n="focus_index">🎯 Study Focus Index:</span>
+                  <strong id="vibe-focus-val">96% (Exam Mode)</strong>
+                </div>
+              </div>
+              
+              <div>
+                <span class="live-price-pill" id="custom-drink-price">£4.40</span>
+              </div>
+            </div>
+
+            <!-- Customizer Controls -->
+            <div class="builder-controls">
+              <!-- Size -->
+              <div class="builder-group">
+                <div class="builder-label">
+                  <span data-i18n="step_1">1. Choose cup size</span>
+                  <span class="sticker sticker-yellow" style="font-size:0.75rem;">Step 1</span>
+                </div>
+                <div class="builder-options-row" id="builder-size-options">
+                  <button class="option-pill-btn" data-type="size" data-val="8oz" data-base="3.40">Short (8oz) · <span class="pill-price">£3.40</span></button>
+                  <button class="option-pill-btn active" data-type="size" data-val="12oz" data-base="3.90">Regular (12oz) · <span class="pill-price">£3.90</span></button>
+                  <button class="option-pill-btn" data-type="size" data-val="16oz" data-base="4.50">Gigantic (16oz) · <span class="pill-price">£4.50</span></button>
+                </div>
+              </div>
+
+              <!-- Milk -->
+              <div class="builder-group">
+                <div class="builder-label">
+                  <span data-i18n="step_2">2. Pick your milk</span>
+                  <span class="sticker sticker-matcha" style="font-size:0.75rem;">Step 2</span>
+                </div>
+                <div class="builder-options-row" id="builder-milk-options">
+                  <button class="option-pill-btn active" data-type="milk" data-val="Oat" data-base="0">Barista Oat (Free)</button>
+                  <button class="option-pill-btn" data-type="milk" data-val="Pistachio" data-base="0.60">Pistachio (+<span class="pill-price">£0.60</span>)</button>
+                  <button class="option-pill-btn" data-type="milk" data-val="Almond" data-base="0">Almond (Free)</button>
+                  <button class="option-pill-btn" data-type="milk" data-val="Whole" data-base="0">Organic Whole (Free)</button>
+                </div>
+              </div>
+
+              <!-- Shots -->
+              <div class="builder-group">
+                <div class="builder-label">
+                  <span data-i18n="step_3">3. Espresso intensity</span>
+                  <span class="sticker sticker-pink" style="font-size:0.75rem;">Step 3</span>
+                </div>
+                <div class="builder-options-row" id="builder-shot-options">
+                  <button class="option-pill-btn" data-type="shots" data-val="Single" data-base="0">Single shot</button>
+                  <button class="option-pill-btn active" data-type="shots" data-val="Double" data-base="0.50">Double shot (+<span class="pill-price">£0.50</span>)</button>
+                  <button class="option-pill-btn" data-type="shots" data-val="Triple" data-base="0.90">Triple shock (+<span class="pill-price">£0.90</span>)</button>
+                  <button class="option-pill-btn" data-type="shots" data-val="Decaf" data-base="0">Decaf (Swiss water)</button>
+                </div>
+              </div>
+
+              <!-- Add-ons -->
+              <div class="builder-group">
+                <div class="builder-label">
+                  <span data-i18n="step_4">4. Craft add-ons</span>
+                  <span class="sticker sticker-lilac" style="font-size:0.75rem;">Optional</span>
+                </div>
+                <div class="builder-checkbox-grid">
+                  <label class="addon-check-label">
+                    <span>
+                      <input type="checkbox" class="builder-addon-cb" data-name="Salted Caramel Cold Foam" data-base="0.80">
+                      Salted Caramel Cold Foam
+                    </span>
+                    <strong class="addon-price">+£0.80</strong>
+                  </label>
+                  <label class="addon-check-label">
+                    <span>
+                      <input type="checkbox" class="builder-addon-cb" data-name="Madagascar Vanilla" data-base="0.50">
+                      Vanilla Bean Syrup
+                    </span>
+                    <strong class="addon-price">+£0.50</strong>
+                  </label>
+                  <label class="addon-check-label">
+                    <span>
+                      <input type="checkbox" class="builder-addon-cb" data-name="Lavender Honey" data-base="0.60">
+                      Lavender Honey Drizzle
+                    </span>
+                    <strong class="addon-price">+£0.60</strong>
+                  </label>
+                  <label class="addon-check-label">
+                    <span>
+                      <input type="checkbox" class="builder-addon-cb" data-name="Cinnamon Cloud" data-base="0.30">
+                      Cinnamon Dust Cloud
+                    </span>
+                    <strong class="addon-price">+£0.30</strong>
+                  </label>
+                </div>
+              </div>
+
+              <button class="btn-primary" id="btn-add-custom-drink" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                <span data-i18n="btn_add_custom">Add custom drink to bag</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+       SECTION 6: LOYALTY STAMP CARD
+       ========================================================================== -->
+    <section class="loyalty-section" id="loyalty">
+      <div class="container">
+        <div class="stamp-card-wrapper">
+          <div class="tape-corner"></div>
+
+          <div class="free-drink-alert" id="free-drink-alert" data-i18n="congrats_free">
+            🎉 CONGRATULATIONS! You completed 8 stamps! Show this screen to your barista for a FREE drink of any size on us! Voucher Code: OVERTHINKER-FREE-8
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <span class="section-eyebrow" data-i18n="loyalty_eyebrow">The 8-Cup Habit</span>
+              <h2 class="section-title" data-i18n="loyalty_title">Digital stamp card</h2>
+              <p class="section-subtitle" data-i18n="loyalty_sub">Buy 8 drinks, get 1 on the house. Automatically stamped when you order online, or test punch it now.</p>
+            </div>
+            <div class="sticker sticker-yellow" style="font-size: 0.95rem;">
+              <span id="stamps-count-text">0 / 8 stamped</span>
+            </div>
+          </div>
+
+          <div class="stamp-grid" id="stamp-grid">
+            <div class="stamp-slot" data-index="1"><span class="stamp-number">1</span><svg class="stamp-mark" viewBox="0 0 40 40"><path d="M20 5L24 15L35 16L27 24L29 35L20 29L11 35L13 24L5 16L16 15Z" fill="#20150F"/></svg></div>
+            <div class="stamp-slot" data-index="2"><span class="stamp-number">2</span><svg class="stamp-mark" viewBox="0 0 40 40"><path d="M20 5L24 15L35 16L27 24L29 35L20 29L11 35L13 24L5 16L16 15Z" fill="#20150F"/></svg></div>
+            <div class="stamp-slot" data-index="3"><span class="stamp-number">3</span><svg class="stamp-mark" viewBox="0 0 40 40"><path d="M20 5L24 15L35 16L27 24L29 35L20 29L11 35L13 24L5 16L16 15Z" fill="#20150F"/></svg></div>
+            <div class="stamp-slot" data-index="4"><span class="stamp-number">4</span><svg class="stamp-mark" viewBox="0 0 40 40"><path d="M20 5L24 15L35 16L27 24L29 35L20 29L11 35L13 24L5 16L16 15Z" fill="#20150F"/></svg></div>
+            <div class="stamp-slot" data-index="5"><span class="stamp-number">5</span><svg class="stamp-mark" viewBox="0 0 40 40"><path d="M20 5L24 15L35 16L27 24L29 35L20 29L11 35L13 24L5 16L16 15Z" fill="#20150F"/></svg></div>
+            <div class="stamp-slot" data-index="6"><span class="stamp-number">6</span><svg class="stamp-mark" viewBox="0 0 40 40"><path d="M20 5L24 15L35 16L27 24L29 35L20 29L11 35L13 24L5 16L16 15Z" fill="#20150F"/></svg></div>
+            <div class="stamp-slot" data-index="7"><span class="stamp-number">7</span><svg class="stamp-mark" viewBox="0 0 40 40"><path d="M20 5L24 15L35 16L27 24L29 35L20 29L11 35L13 24L5 16L16 15Z" fill="#20150F"/></svg></div>
+            <div class="stamp-slot free-reward" data-index="8"><span class="stamp-number" style="font-size:0.8rem; font-weight:800; color:#FF6B8B;">FREE!</span><svg class="stamp-mark" viewBox="0 0 40 40"><path d="M20 5L24 15L35 16L27 24L29 35L20 29L11 35L13 24L5 16L16 15Z" fill="#FFFFFF"/></svg></div>
+          </div>
+
+          <div class="stamp-actions-bar">
+            <span style="font-size: 0.88rem; color: #6e645f;" data-i18n="loyalty_saved_note">
+              💡 Stamps are saved directly to this browser. Clear your cache to reset.
+            </span>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn-secondary" id="btn-demo-stamp" style="padding: 0.45rem 1rem; font-size: 0.85rem;">
+                <span data-i18n="punch_demo">Punch a test stamp</span>
+              </button>
+              <button class="btn-secondary" id="btn-reset-stamps" style="padding: 0.45rem 1rem; font-size: 0.85rem; color: #e63946;">
+                <span data-i18n="reset_btn">Reset</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+       SECTION 7: WALL OF VIBES (GALLERY)
+       ========================================================================== -->
+    <section class="vibes-section" id="vibes">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <span class="section-eyebrow" data-i18n="vibes_eyebrow">Photo Dump & Community</span>
+            <h2 class="section-title" data-i18n="vibes_title">The wall of vibes</h2>
+            <p class="section-subtitle" data-i18n="vibes_sub">Scenes from the counter, the sunny corner table, and late night study sessions.</p>
+          </div>
+          <div class="sticker sticker-pink" style="font-size: 1rem; transform: rotate(-2deg);">
+            #OverthinkerCafe
+          </div>
+        </div>
+
+        <div class="vibes-grid">
+          <div class="polaroid-card">
+            <div class="polaroid-art-frame">
+              <svg viewBox="0 0 160 160" width="120" height="120" fill="none">
+                <circle cx="80" cy="80" r="65" fill="#C89D7C" stroke="#20150F" stroke-width="4"/>
+                <path d="M80 50C70 30 45 40 55 65C65 90 80 105 80 105C80 105 95 90 105 65C115 40 90 30 80 50Z" fill="#FFF9ED" stroke="#20150F" stroke-width="3"/>
+              </svg>
+            </div>
+            <div class="polaroid-caption">8:04am rosetta therapy</div>
+            <div class="polaroid-meta"><span>Table 3</span><span>@sam_designs</span></div>
+          </div>
+
+          <div class="polaroid-card">
+            <div class="polaroid-art-frame">
+              <svg viewBox="0 0 180 120" width="140" height="100" fill="none">
+                <rect x="10" y="10" width="160" height="100" rx="8" fill="#FFD166" stroke="#20150F" stroke-width="4"/>
+                <rect x="25" y="25" width="130" height="50" rx="4" fill="#FAF7F2" stroke="#20150F" stroke-width="3"/>
+                <circle cx="55" cy="50" r="16" fill="#20150F"/>
+                <circle cx="55" cy="50" r="6" fill="#FAF7F2"/>
+                <circle cx="125" cy="50" r="16" fill="#20150F"/>
+                <circle cx="125" cy="50" r="6" fill="#FAF7F2"/>
+                <rect x="65" y="42" width="50" height="16" fill="#FF6B8B" stroke="#20150F" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="polaroid-caption">Study beats vol. 4 tape</div>
+            <div class="polaroid-meta"><span>Curated weekly</span><span>@cafe_sound</span></div>
+          </div>
+
+          <div class="polaroid-card">
+            <div class="polaroid-art-frame" style="background:#20150F;">
+              <svg viewBox="0 0 160 120" width="140" height="100" fill="none">
+                <rect x="15" y="20" width="130" height="80" rx="8" stroke="#43AA8B" stroke-width="3" stroke-dasharray="8 4"/>
+                <text x="80" y="55" fill="#FF6B8B" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="14" text-anchor="middle">DON'T PANIC</text>
+                <text x="80" y="75" fill="#FFD166" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="11" text-anchor="middle">JUST DRINK OAT</text>
+              </svg>
+            </div>
+            <div class="polaroid-caption">The bathroom neon is truth</div>
+            <div class="polaroid-meta"><span>Mirror selfie HQ</span><span>#vibes</span></div>
+          </div>
+
+          <div class="polaroid-card">
+            <div class="polaroid-art-frame">
+              <svg viewBox="0 0 160 120" width="130" height="100" fill="none">
+                <rect x="20" y="30" width="120" height="75" rx="6" fill="#CDB4DB" stroke="#20150F" stroke-width="4"/>
+                <circle cx="80" cy="68" r="26" fill="#20150F"/>
+                <circle cx="80" cy="68" r="18" fill="#FAF7F2" stroke="#43AA8B" stroke-width="3"/>
+                <rect x="35" y="20" width="25" height="10" fill="#FFD166" stroke="#20150F" stroke-width="3"/>
+                <circle cx="120" cy="45" r="5" fill="#FF6B8B"/>
+              </svg>
+            </div>
+            <div class="polaroid-caption">35mm roll from Sunday</div>
+            <div class="polaroid-meta"><span>Portra 400</span><span>@maya_snaps</span></div>
+          </div>
+
+          <div class="polaroid-card">
+            <div class="polaroid-art-frame">
+              <svg viewBox="0 0 160 140" width="130" height="110" fill="none">
+                <ellipse cx="80" cy="80" rx="55" ry="40" fill="#E29578" stroke="#20150F" stroke-width="4"/>
+                <path d="M80 50C60 50 45 65 45 80C45 95 65 110 85 110C105 110 120 95 120 80C120 65 105 60 90 60C75 60 65 70 65 80" stroke="#FFD166" stroke-width="5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="polaroid-caption">Cardamom buns straight out</div>
+            <div class="polaroid-meta"><span>Batch #02</span><span>Sold out by 11am</span></div>
+          </div>
+
+          <div class="polaroid-card">
+            <div class="polaroid-art-frame">
+              <svg viewBox="0 0 160 140" width="130" height="110" fill="none">
+                <ellipse cx="80" cy="75" rx="45" ry="38" fill="#D4A373" stroke="#20150F" stroke-width="3"/>
+                <path d="M40 50C30 65 35 90 42 85" stroke="#20150F" stroke-width="4" stroke-linecap="round"/>
+                <path d="M120 50C130 65 125 90 118 85" stroke="#20150F" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="65" cy="70" r="4" fill="#20150F"/>
+                <circle cx="95" cy="70" r="4" fill="#20150F"/>
+                <ellipse cx="80" cy="82" rx="7" ry="5" fill="#20150F"/>
+                <path d="M50 95L80 120L110 95Z" fill="#FF6B8B" stroke="#20150F" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <div class="polaroid-caption">Waffles, Chief Morale Officer</div>
+            <div class="polaroid-meta"><span>Dachshund</span><span>Likes foam treats</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+       SECTION 8: OUR STORY
+       ========================================================================== -->
+    <section class="story-section" id="story">
+      <div class="container">
+        <div class="story-zine-box">
+          <div class="tape-corner"></div>
+
+          <span class="section-eyebrow" data-i18n="story_eyebrow">How We Got Here</span>
+          <h2 class="section-title" data-i18n="story_title">Three honest lines about us</h2>
+
+          <div class="story-points">
+            <div class="story-item">
+              <div class="story-step-num">01</div>
+              <p class="story-item-text" data-i18n="story_1">
+                <strong>Born in finals week:</strong> We started out of a cramped student kitchen because library coffee tasted like pencil shavings and existential dread. We vowed to make coffee that actually sparks joy.
+              </p>
+            </div>
+
+            <div class="story-item">
+              <div class="story-step-num">02</div>
+              <p class="story-item-text" data-i18n="story_2">
+                <strong>Radically ethical:</strong> Every single bean is directly traded with smallholder farming collectives in Colombia and Ethiopia. We pay 40% above fair-trade minimums and roast fresh weekly.
+              </p>
+            </div>
+
+            <div class="story-item">
+              <div class="story-step-num">03</div>
+              <p class="story-item-text" data-i18n="story_3">
+                <strong>No coffee snobs:</strong> Want oat milk? Pistachio cold foam? Decaf with extra syrup? We will never judge. Bring your laptop, bring your dog, and sit as long as you need.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+       SECTION 9: VISIT & CONTACT & STUDY PERKS
+       ========================================================================== -->
+    <section class="visit-section" id="visit">
+      <div class="container">
+        <div class="visit-grid">
+          <div class="visit-card">
+            <div class="tape-corner"></div>
+            <span class="section-eyebrow" data-i18n="visit_eyebrow">Drop By</span>
+            <h2 class="section-title" data-i18n="visit_title">Where to find us</h2>
+            <p id="cfg-address" style="font-weight: 700; margin-bottom: 0.5rem;">
+              42 Gordon Square, Bloomsbury, London WC1H 0PD
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 1.5rem;" data-i18n="visit_desc">
+              A 3-minute stroll from Russell Square & Euston Station. Look for the yellow striped awning.
+            </p>
+
+            <table class="hours-table">
+              <tbody>
+                <tr class="hours-today-row">
+                  <td data-i18n="hours_weekday">Monday – Friday</td>
+                  <td>7:30am – 9:00pm</td>
+                </tr>
+                <tr>
+                  <td data-i18n="hours_sat">Saturday</td>
+                  <td>8:30am – 8:00pm</td>
+                </tr>
+                <tr>
+                  <td data-i18n="hours_sun">Sunday</td>
+                  <td>9:00am – 7:00pm</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="stylized-map-box">
+              <svg viewBox="0 0 500 220" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="500" height="220" fill="#EAE5DC"/>
+                <path d="M0 60H500M0 150H500M120 0V220M260 0V220M400 0V220" stroke="#FFFFFF" stroke-width="12"/>
+                <path d="M60 0L200 220M340 0L480 220" stroke="#FFFFFF" stroke-width="8"/>
+                <rect x="135" y="15" width="110" height="35" rx="4" fill="#D8F3DC" stroke="#20150F" stroke-width="2"/>
+                <text x="190" y="37" fill="#2D6A4F" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="11" text-anchor="middle">Gordon Square Garden</text>
+                
+                <rect x="275" y="75" width="110" height="60" rx="4" fill="#FAF7F2" stroke="#20150F" stroke-width="2"/>
+                <text x="330" y="105" fill="#20150F" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="10" text-anchor="middle">UCL Main Quad</text>
+                <text x="330" y="122" fill="#7A7068" font-size="9" text-anchor="middle">2 min walk</text>
+
+                <g transform="translate(140, 100)">
+                  <circle cx="20" cy="20" r="16" fill="#FF6B8B" stroke="#20150F" stroke-width="3"/>
+                  <circle cx="20" cy="20" r="6" fill="#FFFFFF"/>
+                  <rect x="42" y="6" width="140" height="28" rx="6" fill="#FFD166" stroke="#20150F" stroke-width="2.5"/>
+                  <text x="112" y="24" fill="#20150F" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="11" text-anchor="middle">☕ Overthinker Café</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <div class="visit-card">
+            <span class="section-eyebrow" data-i18n="study_eyebrow">Study-Friendly Specs</span>
+            <h2 class="section-title" data-i18n="study_title">The digital nomad test</h2>
+            
+            <div class="study-perks-box">
+              <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem;">
+                📶 High-Speed Campus Fiber Wi-Fi
+              </div>
+              <p style="font-size: 0.85rem; color: var(--text-muted);" data-i18n="wifi_spec">
+                Dedicated 450Mbps upload & download with zero throttling.
+              </p>
+
+              <div class="wifi-copy-bar">
+                <div>
+                  <span style="font-size: 0.78rem; color: var(--text-muted); display: block;">Network: <strong>Overthinker_Guest</strong></span>
+                  <span class="wifi-code" id="wifi-pass-val">espresso_and_panic_42</span>
+                </div>
+                <button class="btn-copy" id="btn-copy-wifi" data-i18n="copy_pw">Copy password</button>
+              </div>
+
+              <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem;">
+                <div style="display:flex; justify-content:space-between;">
+                  <span data-i18n="plugs_label">🔌 Plugs per table:</span>
+                  <strong>85% coverage</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span data-i18n="noise_label">🎵 Ambient decibels:</span>
+                  <strong>Chill lo-fi (~55 dB)</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span data-i18n="dog_treats">🐾 Dog treats: Always behind bar</span>
+                  <strong>Free</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="social-links-row">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-btn">
+                <span>📸</span>
+                <span>@OverthinkerCafe</span>
+              </a>
+              <a href="https://wa.me/447700900077" target="_blank" rel="noopener noreferrer" class="social-btn">
+                <span>💬</span>
+                <span>WhatsApp Barista</span>
+              </a>
+              <a href="tel:+442079460123" class="social-btn">
+                <span>📞</span>
+                <span>020 7946 0123</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       SECTION 10: FOOTER
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem;" data-i18n="footer_title">
+            Stay in the caffeine loop
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 460px;" data-i18n="footer_sub">
+            Secret monthly drink drops, student discount codes, and dog photos. No spam, we're too busy making flat whites.
+          </p>
+
+          <form class="newsletter-form" id="newsletter-form">
+            <input type="email" class="newsletter-input" placeholder="Enter your student or personal email..." required aria-label="Email address">
+            <button type="submit" class="newsletter-btn" data-i18n="subscribe">Subscribe</button>
+          </form>
+          <div id="newsletter-feedback" style="display:none; margin-top:0.6rem; font-size:0.88rem; font-weight:700; color:var(--color-matcha);">
+            🎉 You're on the list! Check your inbox for a 15% discount code.
+          </div>
+        </div>
+
+        <div>
+          <div class="ai-transparency-card">
+            <div style="display: flex; align-items: center; gap: 0.45rem; font-weight: 800; margin-bottom: 0.4rem; font-family: var(--font-display);">
+              <span>🤖</span>
+              <span data-i18n="ai_note_title">How our "Mood Picker" AI works</span>
+            </div>
+            <p data-i18n="ai_note_body">
+              100% lightweight client-side heuristic recommendation. We match your mood vector (caffeine, sweetness, comfort) against drink flavor profiles right in your browser. Zero tracking cookies, zero external AI APIs, and your orders never leave your device.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © <span id="current-year">2026</span> <strong id="cfg-footer-brand">Overthinker Café Ltd</strong>. Handcrafted with oat milk & curiosity.
+        </div>
+        <div>
+          <span>[Configurable Template · Replace details in <code>CAFE_CONFIG</code>]</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       SECTION 4: ORDER DRAWER / BAG
+       ========================================================================== -->
+  <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true">
+    <div class="order-drawer" role="dialog" aria-modal="true" aria-label="Your coffee order">
+      <div class="drawer-header">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <h2 class="drawer-title" data-i18n="your_order">Your order</h2>
+          <span class="sticker sticker-yellow" id="drawer-items-count">0 items</span>
+        </div>
+        <button class="btn-icon" id="btn-close-drawer" aria-label="Close order bag">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="drawer-body" id="drawer-body">
+        <div id="cart-content-view">
+          <div class="cart-items-list" id="cart-items-container"></div>
+
+          <div class="cart-empty-box" id="cart-empty-box" style="display:none;">
+            <svg width="64" height="64" viewBox="0 0 48 48" fill="none" style="margin: 0 auto;" aria-hidden="true">
+              <rect x="8" y="14" width="28" height="26" rx="6" fill="#F4EFE6" stroke="#20150F" stroke-width="3"/>
+              <path d="M16 26C18 24 26 24 28 26" stroke="#20150F" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="16" cy="22" r="2" fill="#20150F"/>
+              <circle cx="28" cy="22" r="2" fill="#20150F"/>
+            </svg>
+            <div class="cart-empty-title" data-i18n="cart_empty_title">Your cart is thirsty</div>
+            <p class="cart-empty-lead" data-i18n="cart_empty_lead">You haven't added anything delicious yet. Check out the menu or try the mood picker!</p>
+            <a href="#menu" class="btn-secondary" id="btn-cart-to-menu" style="display: inline-block;" data-i18n="browse_menu">Browse the menu</a>
+          </div>
+
+          <div class="dog-tip-box" id="dog-tip-box">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <span style="font-size: 1.3rem;">🐶</span>
+              <div>
+                <strong style="font-size: 0.88rem; display: block;" data-i18n="dog_tip_title">Round up for Waffles' Treat Fund</strong>
+                <span style="font-size: 0.78rem; color: #6e645f;" data-i18n="dog_tip_sub">Add tip for our dachshund shop dog</span>
+              </div>
+            </div>
+            <input type="checkbox" id="cb-dog-tip" style="width: 18px; height: 18px; accent-color: var(--color-bubblegum);">
+          </div>
+
+          <div class="drawer-form-box" id="drawer-form-box">
+            <div>
+              <label for="pickup-name" style="font-weight: 700; font-size: 0.88rem; display: block; margin-bottom: 0.35rem;" data-i18n="pickup_name">Pickup name</label>
+              <input type="text" id="pickup-name" class="drawer-input" placeholder="e.g. Alex (on laptop)" required>
+            </div>
+            <div>
+              <label for="order-note" style="font-weight: 700; font-size: 0.88rem; display: block; margin-bottom: 0.35rem;" data-i18n="barista_note">Barista note (optional)</label>
+              <input type="text" id="order-note" class="drawer-input" placeholder="e.g. extra hot / leave room for ice">
+            </div>
+          </div>
+        </div>
+
+        <div class="order-success-view" id="order-success-view">
+          <span class="sticker sticker-matcha" style="font-size: 0.95rem; margin-bottom: 0.75rem;" data-i18n="order_sent">Order sent to barista!</span>
+          
+          <div class="order-ticket-card">
+            <div style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.25rem;">Order Number</div>
+            <div class="order-num-big" id="success-order-num">#OVR-482</div>
+            <div style="margin-top: 0.4rem; font-weight: 700; font-size: 1rem;" id="success-pickup-name">Ready for: Alex</div>
+            <div style="font-size: 0.85rem; color: #6e645f; margin-top: 0.25rem;"><span data-i18n="ready_at">Estimated ready time:</span> <strong id="success-ready-time">~6-9 mins</strong></div>
+          </div>
+
+          <div class="live-tracker-stepper">
+            <div class="tracker-step" id="prep-step-1">
+              <span>🧾</span>
+              <span data-i18n="step_ticket">1. Order ticket printed & beans weighed</span>
+            </div>
+            <div class="tracker-step" id="prep-step-2">
+              <span>☕</span>
+              <span data-i18n="step_pulling">2. Pulling espresso shot & steaming milk</span>
+            </div>
+            <div class="tracker-step" id="prep-step-3">
+              <span>🏷️</span>
+              <span data-i18n="step_pouring">3. Pouring & slapping the sticker on cup</span>
+            </div>
+            <div class="tracker-step" id="prep-step-4">
+              <span>✨</span>
+              <span data-i18n="step_ready">4. Ready at the pickup counter!</span>
+            </div>
+          </div>
+
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            ⭐ We just stamped your loyalty card! Head over to the pickup counter when your number is called.
+          </p>
+
+          <button class="btn-primary" id="btn-order-another" style="width: 100%; justify-content: center;">
+            <span data-i18n="order_another">Place another order</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="drawer-footer" id="drawer-footer">
+        <div class="drawer-total-row">
+          <span data-i18n="total">Total</span>
+          <span id="drawer-total-amount">£0.00</span>
+        </div>
+        <button class="btn-checkout" id="btn-place-order">
+          <span data-i18n="place_order">Place order now</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sticky Bar -->
+  <div class="mobile-order-bar" id="mobile-order-bar">
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <span style="font-size: 1.1rem;">🛒</span>
+      <span id="mobile-cart-items-text">0 drinks</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <span id="mobile-cart-total" style="font-size: 1.15rem;">£0.00</span>
+      <button class="btn-primary" id="btn-mobile-open-drawer" style="padding: 0.4rem 0.9rem; font-size: 0.88rem; background: #20150F; color: #FAF7F2;">
+        <span data-i18n="order_btn">View bag</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================== -->
+  <script>
+    /* ==========================================================================
+       CURRENCIES & EXCHANGE RATES (relative to base GBP)
+       ========================================================================== */
+    const CURRENCIES = {
+      GBP: { symbol: '£', code: 'GBP', rate: 1.00, decimals: 2, label: '£ GBP' },
+      USD: { symbol: '$', code: 'USD', rate: 1.30, decimals: 2, label: '$ USD' },
+      EUR: { symbol: '€', code: 'EUR', rate: 1.18, decimals: 2, label: '€ EUR' },
+      JPY: { symbol: '¥', code: 'JPY', rate: 195, decimals: 0, label: '¥ JPY' },
+      AUD: { symbol: 'A$', code: 'AUD', rate: 1.95, decimals: 2, label: 'A$ AUD' }
+    };
+
+    /* ==========================================================================
+       INTERNATIONALIZATION (i18n) DICTIONARY
+       ========================================================================== */
+    const TRANSLATIONS = {
+      en: {
+        header_hours: "Open today · 7:30am – 9:00pm",
+        order_btn: "Order",
+        hero_badge_student: "⚡ Student-run specialty coffee",
+        hero_badge_oat: "✨ Oat milk default",
+        hero_headline_html: "Pouring liquid motivation for people with <mark>47 open browser tabs</mark>.",
+        hero_lead: "Ethically sourced single-origin roasts, Ceremonial Uji matcha, and flaky morning bakes. Made fast so you make your 9am lecture or your next meeting.",
+        hero_order_cta: "Order now",
+        hero_build_cta: "Build your drink",
+        hero_pickup_time: "Avg pickup: 4 mins",
+        hero_wifi_spec: "Gigabit Wi-Fi & plugs",
+        hero_dogs: "Dogs welcome",
+        hero_sticker_prompt: "🏷️ Click any sticker below to slap it onto the screen:",
+        hero_clear_stickers: "Clear slapped stickers",
+        mood_eyebrow: "Smart Drink Recommender",
+        mood_title: "What's your mood right now?",
+        mood_sub: "Tap how you're feeling and we'll pick the exact potion you need with zero guesswork.",
+        mood_energy: "Need energy",
+        mood_cozy: "Cozy",
+        mood_fresh: "Fresh",
+        mood_sweet: "Sweet",
+        menu_eyebrow: "The Lineup",
+        menu_title: "Handcrafted menu",
+        menu_sub: "Roasted in small batches, infused with house syrups, and served in compostable cups.",
+        cat_all: "All items",
+        cat_coffee: "Coffee & shots",
+        cat_matcha: "Matcha & teas",
+        cat_fizzy: "Cold & fizzy",
+        cat_food: "Bakes & toasties",
+        surprise_me: "Surprise me!",
+        vegan_only: "Vegan only",
+        search_placeholder: "Search menu items...",
+        builder_eyebrow: "The Drink Lab",
+        builder_title: "Build your own drink",
+        builder_sub: "Engineer your exact caffeine formula. Switch between hot or iced, tweak layers, and watch your cup update live.",
+        btn_iced: "🧊 Chilled Iced",
+        btn_hot: "🔥 Steamy Hot",
+        step_1: "1. Choose cup size",
+        step_2: "2. Pick your milk",
+        step_3: "3. Espresso intensity",
+        step_4: "4. Craft add-ons",
+        btn_add_custom: "Add custom drink to bag",
+        caffeine_est: "⚡ Estimated Caffeine:",
+        focus_index: "🎯 Study Focus Index:",
+        loyalty_eyebrow: "The 8-Cup Habit",
+        loyalty_title: "Digital stamp card",
+        loyalty_sub: "Buy 8 drinks, get 1 on the house. Automatically stamped when you order online, or test punch it now.",
+        loyalty_saved_note: "💡 Stamps are saved directly to this browser. Clear your cache to reset.",
+        punch_demo: "Punch a test stamp",
+        reset_btn: "Reset",
+        congrats_free: "🎉 CONGRATULATIONS! You completed 8 stamps! Show this screen to your barista for a FREE drink of any size on us! Voucher Code: OVERTHINKER-FREE-8",
+        vibes_eyebrow: "Photo Dump & Community",
+        vibes_title: "The wall of vibes",
+        vibes_sub: "Scenes from the counter, the sunny corner table, and late night study sessions.",
+        story_eyebrow: "How We Got Here",
+        story_title: "Three honest lines about us",
+        story_1: "Born in finals week: We started out of a cramped student kitchen because library coffee tasted like pencil shavings and existential dread. We vowed to make coffee that actually sparks joy.",
+        story_2: "Radically ethical: Every single bean is directly traded with smallholder farming collectives in Colombia and Ethiopia. We pay 40% above fair-trade minimums and roast fresh weekly.",
+        story_3: "No coffee snobs: Want oat milk? Pistachio cold foam? Decaf with extra syrup? We will never judge. Bring your laptop, bring your dog, and sit as long as you need.",
+        visit_eyebrow: "Drop By",
+        visit_title: "Where to find us",
+        visit_desc: "A 3-minute stroll from Russell Square & Euston Station. Look for the yellow striped awning.",
+        hours_weekday: "Monday – Friday",
+        hours_sat: "Saturday",
+        hours_sun: "Sunday",
+        study_eyebrow: "Study-Friendly Specs",
+        study_title: "The digital nomad test",
+        wifi_spec: "Dedicated 450Mbps upload & download with zero throttling.",
+        copy_pw: "Copy password",
+        copied: "Copied!",
+        plugs_label: "🔌 Plugs per table:",
+        noise_label: "🎵 Ambient decibels:",
+        dog_treats: "🐾 Dog treats: Always behind bar",
+        footer_title: "Stay in the caffeine loop",
+        footer_sub: "Secret monthly drink drops, student discount codes, and dog photos. No spam, we're too busy making flat whites.",
+        subscribe: "Subscribe",
+        ai_note_title: "How our 'Mood Picker' AI works",
+        ai_note_body: "100% lightweight client-side heuristic recommendation. We match your mood vector (caffeine, sweetness, comfort) against drink flavor profiles right in your browser. Zero tracking cookies, zero external AI APIs, and your orders never leave your device.",
+        your_order: "Your order",
+        cart_empty_title: "Your cart is thirsty",
+        cart_empty_lead: "You haven't added anything delicious yet. Check out the menu or try the mood picker!",
+        browse_menu: "Browse the menu",
+        dog_tip_title: "Round up for Waffles' Treat Fund",
+        dog_tip_sub: "Add tip for our dachshund shop dog",
+        pickup_name: "Pickup name",
+        barista_note: "Barista note (optional)",
+        total: "Total",
+        place_order: "Place order now",
+        order_sent: "Order sent to barista!",
+        ready_at: "Estimated ready time:",
+        step_ticket: "1. Order ticket printed & beans weighed",
+        step_pulling: "2. Pulling espresso shot & steaming milk",
+        step_pouring: "3. Pouring & slapping the sticker on cup",
+        step_ready: "4. Ready at the pickup counter!",
+        order_another: "Place another order"
+      },
+      es: {
+        header_hours: "Abierto hoy · 7:30 – 21:00",
+        order_btn: "Pedir",
+        hero_badge_student: "⚡ Café de especialidad estudiantil",
+        hero_badge_oat: "✨ Leche de avena por defecto",
+        hero_headline_html: "Sirviendo motivación líquida para gente con <mark>47 pestañas abiertas</mark>.",
+        hero_lead: "Cafés de origen ético, matcha ceremonial de Uji y repostería recién horneada. Hecho rápido para que llegues a tiempo a tu clase o reunión.",
+        hero_order_cta: "Pedir ahora",
+        hero_build_cta: "Personaliza tu café",
+        hero_pickup_time: "Listo en aprox: 4 mins",
+        hero_wifi_spec: "Wi-Fi Gigabit y enchufes",
+        hero_dogs: "Perritos bienvenidos",
+        hero_sticker_prompt: "🏷️ Toca cualquier pegatina para pegarla en tu pantalla:",
+        hero_clear_stickers: "Quitar pegatinas",
+        mood_eyebrow: "Recomendador Inteligente",
+        mood_title: "¿Cuál es tu vibra hoy?",
+        mood_sub: "Dinos cómo te sientes y elegiremos la bebida exacta que necesitas sin complicaciones.",
+        mood_energy: "Necesito energía",
+        mood_cozy: "Acogedor",
+        mood_fresh: "Fresco",
+        mood_sweet: "Dulce",
+        menu_eyebrow: "Nuestra Carta",
+        menu_title: "Menú artesanal",
+        menu_sub: "Tostado en pequeños lotes, infusionado con siropes caseros y servido en vasos compostables.",
+        cat_all: "Todos",
+        cat_coffee: "Café y shots",
+        cat_matcha: "Matcha y tés",
+        cat_fizzy: "Fríos y burbujas",
+        cat_food: "Panadería y tostadas",
+        surprise_me: "¡Sorpréndeme!",
+        vegan_only: "Solo vegano",
+        search_placeholder: "Buscar en el menú...",
+        builder_eyebrow: "El Laboratorio",
+        builder_title: "Crea tu propia bebida",
+        builder_sub: "Diseña tu fórmula de cafeína exacta. Elige frío o caliente y mira cómo cambia tu vaso en tiempo real.",
+        btn_iced: "🧊 Con hielo",
+        btn_hot: "🔥 Caliente",
+        step_1: "1. Tamaño del vaso",
+        step_2: "2. Elige tu leche",
+        step_3: "3. Intensidad de café",
+        step_4: "4. Extras artesanales",
+        btn_add_custom: "Añadir al pedido",
+        caffeine_est: "⚡ Cafeína estimada:",
+        focus_index: "🎯 Nivel de concentración:",
+        loyalty_eyebrow: "El Hábito de 8 Tazas",
+        loyalty_title: "Tarjeta de sellos digital",
+        loyalty_sub: "Compra 8 bebidas y la novena es gratis. Se sella automáticamente al pedir.",
+        loyalty_saved_note: "💡 Los sellos se guardan en este navegador.",
+        punch_demo: "Sello de prueba",
+        reset_btn: "Reiniciar",
+        congrats_free: "🎉 ¡FELICIDADES! ¡Completaste 8 sellos! Muestra esta pantalla al barista para tu BEBIDA GRATIS. Código: OVERTHINKER-FREE-8",
+        vibes_eyebrow: "Comunidad y Fotos",
+        vibes_title: "El mural de vibras",
+        vibes_sub: "Momentos en la barra, la mesa soleada y noches de estudio.",
+        story_eyebrow: "Nuestra Historia",
+        story_title: "Tres verdades sobre nosotros",
+        story_1: "Nacidos en semana de exámenes: Empezamos en una cocina estudiantil porque el café de la biblioteca sabía a desesperación.",
+        story_2: "Radicalmente éticos: Cada grano se comercializa directamente con cooperativas en Colombia y Etiopía pagando 40% más que el precio justo.",
+        story_3: "Cero elitismo: ¿Leche de avena? ¿Espuma de pistacho? ¿Descafeinado? Nunca juzgamos. Ven con tu perro y tu portátil.",
+        visit_eyebrow: "Ven a vernos",
+        visit_title: "Dónde encontrarnos",
+        visit_desc: "A 3 minutos de Russell Square y Euston. Busca el toldo de rayas amarillas.",
+        hours_weekday: "Lunes – Viernes",
+        hours_sat: "Sábado",
+        hours_sun: "Domingo",
+        study_eyebrow: "Para nómadas digitales",
+        study_title: "La prueba del trabajo remoto",
+        wifi_spec: "450 Mbps de subida y bajada sin restricciones.",
+        copy_pw: "Copiar contraseña",
+        copied: "¡Copiado!",
+        plugs_label: "🔌 Enchufes por mesa:",
+        noise_label: "🎵 Decibelios ambientales:",
+        dog_treats: "🐾 Premios para perros: En barra",
+        footer_title: "No te pierdas nada",
+        footer_sub: "Lanzamientos secretos, descuentos para estudiantes y fotos perrunas.",
+        subscribe: "Suscribirme",
+        ai_note_title: "Cómo funciona la IA recomendadora",
+        ai_note_body: "100% heurística en tu navegador. Comparamos tu estado de ánimo con el perfil de sabor sin rastreadores.",
+        your_order: "Tu pedido",
+        cart_empty_title: "Tu cesta tiene sed",
+        cart_empty_lead: "Aún no has añadido nada delicioso. ¡Mira el menú o prueba el recomendador!",
+        browse_menu: "Ver el menú",
+        dog_tip_title: "Bote de premios para Waffles",
+        dog_tip_sub: "Añadir propina para nuestro teckel",
+        pickup_name: "Nombre para recoger",
+        barista_note: "Nota para el barista (opcional)",
+        total: "Total",
+        place_order: "Confirmar pedido",
+        order_sent: "¡Pedido enviado al barista!",
+        ready_at: "Tiempo estimado de entrega:",
+        step_ticket: "1. Ticket impreso y granos pesados",
+        step_pulling: "2. Extrayendo espresso y texturizando leche",
+        step_pouring: "3. Sirviendo y pegando pegatina en el vaso",
+        step_ready: "4. ¡Listo en el mostrador de recogida!",
+        order_another: "Hacer otro pedido"
+      },
+      fr: {
+        header_hours: "Ouvert aujourd'hui · 7h30 – 21h00",
+        order_btn: "Commander",
+        hero_badge_student: "⚡ Café de spécialité étudiant",
+        hero_badge_oat: "✨ Lait d'avoine par défaut",
+        hero_headline_html: "De la motivation liquide pour les esprits avec <mark>47 onglets ouverts</mark>.",
+        hero_lead: "Cafés éthiques pure origine, matcha d'Uji de cérémonie et viennoiseries chaudes. Servi vite pour votre cours de 9h ou votre réunion.",
+        hero_order_cta: "Commander",
+        hero_build_cta: "Composer ma boisson",
+        hero_pickup_time: "Prêt en env: 4 mins",
+        hero_wifi_spec: "Wi-Fi Gigabit & prises",
+        hero_dogs: "Chiens bienvenus",
+        hero_sticker_prompt: "🏷️ Cliquez sur un sticker pour le coller sur l'écran :",
+        hero_clear_stickers: "Effacer les stickers",
+        mood_eyebrow: "Recommandation Intelligente",
+        mood_title: "Quelle est votre humeur ?",
+        mood_sub: "Indiquez votre envie du moment et nous trouvons la potion idéale sans hésitation.",
+        mood_energy: "Besoin d'énergie",
+        mood_cozy: "Réconfortant",
+        mood_fresh: "Frais & léger",
+        mood_sweet: "Gourmand",
+        menu_eyebrow: "La Carte",
+        menu_title: "Menu artisanal",
+        menu_sub: "Torréfié en petites fournées, sirops maison et gobelets compostables.",
+        cat_all: "Tout",
+        cat_coffee: "Café & shots",
+        cat_matcha: "Matcha & thés",
+        cat_fizzy: "Glacé & pétillant",
+        cat_food: "Pâtisseries & toasts",
+        surprise_me: "Surprenez-moi !",
+        vegan_only: "Végétalien seul",
+        search_placeholder: "Rechercher au menu...",
+        builder_eyebrow: "Le Labo",
+        builder_title: "Créez votre boisson",
+        builder_sub: "Personnalisez votre dose de caféine. Chaud ou glacé, observez votre verre en direct.",
+        btn_iced: "🧊 Glacé",
+        btn_hot: "🔥 Chaud",
+        step_1: "1. Taille du gobelet",
+        step_2: "2. Choix du lait",
+        step_3: "3. Intensité espresso",
+        step_4: "4. Suppléments maison",
+        btn_add_custom: "Ajouter au panier",
+        caffeine_est: "⚡ Caféine estimée :",
+        focus_index: "🎯 Indice de concentration :",
+        loyalty_eyebrow: "L'Habitude des 8 Tasses",
+        loyalty_title: "Carte de fidélité digitale",
+        loyalty_sub: "8 boissons achetées, la 9ème offerte. Tamponné automatiquement.",
+        loyalty_saved_note: "💡 Tampons sauvegardés dans votre navigateur.",
+        punch_demo: "Tampon d'essai",
+        reset_btn: "Réinitialiser",
+        congrats_free: "🎉 FÉLICITATIONS ! 8 tampons validés ! Présentez cet écran pour votre BOISSON GRATUITE. Code : OVERTHINKER-FREE-8",
+        vibes_eyebrow: "Ambiance & Photos",
+        vibes_title: "Le mur des ondes",
+        vibes_sub: "Instantanés du comptoir, table ensoleillée et sessions révisions.",
+        story_eyebrow: "Notre Histoire",
+        story_title: "Trois lignes honnêtes sur nous",
+        story_1: "Né pendant les partiels : Créé dans une cuisine étudiante car le café de la fac avait le goût du désespoir.",
+        story_2: "Engagement éthique : Grains en commerce direct avec des coopératives en Colombie et Éthiopie, payés 40% au-dessus du prix équitable.",
+        story_3: "Zéro snobisme : Lait d'avoine ? Mousse pistache ? Décaféiné ? Venez avec votre chien et révisez sereinement.",
+        visit_eyebrow: "Nous Trouver",
+        visit_title: "Venez nous voir",
+        visit_desc: "À 3 minutes de Russell Square & Euston. Cherchez l'auvent rayé jaune.",
+        hours_weekday: "Lundi – Vendredi",
+        hours_sat: "Samedi",
+        hours_sun: "Dimanche",
+        study_eyebrow: "Espace Étudiants & Télétravail",
+        study_title: "Le test du digital nomad",
+        wifi_spec: "Fibre 450 Mbps sans coupure.",
+        copy_pw: "Copier le mot de passe",
+        copied: "Copié !",
+        plugs_label: "🔌 Prises par table :",
+        noise_label: "🎵 Volume sonore ambiant :",
+        dog_treats: "🐾 Friandises pour chiens : Au bar",
+        footer_title: "Restez dans la boucle",
+        footer_sub: "Nouveautés mensuelles, promos étudiantes et photos de notre mascotte.",
+        subscribe: "S'inscrire",
+        ai_note_title: "Fonctionnement du sélecteur d'humeur",
+        ai_note_body: "Recommandation locale dans votre navigateur. Aucun cookie traceur, respect total de votre vie privée.",
+        your_order: "Votre commande",
+        cart_empty_title: "Votre panier a soif",
+        cart_empty_lead: "Vous n'avez encore rien ajouté. Parcourez la carte !",
+        browse_menu: "Découvrir la carte",
+        dog_tip_title: "Pourboire friandise pour Waffles",
+        dog_tip_sub: "Ajouter un pourboire pour notre teckel",
+        pickup_name: "Nom pour le retrait",
+        barista_note: "Note au barista (optionnel)",
+        total: "Total",
+        place_order: "Valider ma commande",
+        order_sent: "Commande envoyée au barista !",
+        ready_at: "Temps estimé :",
+        step_ticket: "1. Ticket imprimé et grains pesés",
+        step_pulling: "2. Extraction espresso & texturage du lait",
+        step_pouring: "3. Versage et pose du sticker sur le verre",
+        step_ready: "4. Prêt au comptoir !",
+        order_another: "Commander à nouveau"
+      },
+      de: {
+        header_hours: "Heute geöffnet · 7:30 – 21:00",
+        order_btn: "Bestellen",
+        hero_badge_student: "⚡ Studentisches Spezialitätencafé",
+        hero_badge_oat: "✨ Hafermilch als Standard",
+        hero_headline_html: "Flüssige Motivation für Köpfe mit <mark>47 offenen Tabs</mark>.",
+        hero_lead: "Ethisch gehandelter Single-Origin Kaffee, Zeremonieller Uji Matcha und ofenfrisches Gebäck.",
+        hero_order_cta: "Jetzt bestellen",
+        hero_build_cta: "Getränk zusammenstellen",
+        hero_pickup_time: "Abholbereit in ca. 4 Min.",
+        hero_wifi_spec: "Gigabit WLAN & Steckdosen",
+        hero_dogs: "Hunde willkommen",
+        hero_sticker_prompt: "🏷️ Klicke auf einen Sticker, um ihn auf die Seite zu kleben:",
+        hero_clear_stickers: "Sticker entfernen",
+        mood_eyebrow: "Smarte Getränkeempfehlung",
+        mood_title: "Wie ist deine Stimmung heute?",
+        mood_sub: "Sag uns, wie du dich fühlst, und wir finden dein perfektes Getränk.",
+        mood_energy: "Brauche Energie",
+        mood_cozy: "Gemütlich",
+        mood_fresh: "Erfrischend",
+        mood_sweet: "Süß",
+        menu_eyebrow: "Die Auswahl",
+        menu_title: "Handgemachte Karte",
+        menu_sub: "Frisch geröstet, mit hausgemachten Sirupen und kompostierbaren Bechern.",
+        cat_all: "Alle",
+        cat_coffee: "Kaffee & Shots",
+        cat_matcha: "Matcha & Tees",
+        cat_fizzy: "Kalt & Spritzig",
+        cat_food: "Gebäck & Toasties",
+        surprise_me: "Überrasch mich!",
+        vegan_only: "Nur vegan",
+        search_placeholder: "Menü durchsuchen...",
+        builder_eyebrow: "Das Getränke-Labor",
+        builder_title: "Eigenes Getränk mixen",
+        builder_sub: "Passe deine Koffeindosis an. Heiß oder auf Eis, mit Live-Vorschau deines Bechers.",
+        btn_iced: "🧊 Auf Eis",
+        btn_hot: "🔥 Dampfend heiß",
+        step_1: "1. Bechergröße",
+        step_2: "2. Milchsorte",
+        step_3: "3. Espresso-Intensität",
+        step_4: "4. Extras",
+        btn_add_custom: "In die Tasche legen",
+        caffeine_est: "⚡ Koffeingehalt:",
+        focus_index: "🎯 Lern-Fokus-Index:",
+        loyalty_eyebrow: "Die 8-Tassen-Gewohnheit",
+        loyalty_title: "Digitale Stempelkarte",
+        loyalty_sub: "8 Getränke kaufen, das 9. geht aufs Haus. Wird automatisch gestempelt.",
+        loyalty_saved_note: "💡 Stempel werden direkt im Browser gespeichert.",
+        punch_demo: "Test-Stempel",
+        reset_btn: "Zurücksetzen",
+        congrats_free: "🎉 HERZLICHEN GLÜCKWUNSCH! 8 Stempel voll! Zeige diesen Bildschirm für ein GRATIS-GETRÄNK. Code: OVERTHINKER-FREE-8",
+        vibes_eyebrow: "Community & Fotos",
+        vibes_title: "Wand der guten Laune",
+        vibes_sub: "Schnappschüsse von der Theke, Sonnentagen und Lernabenden.",
+        story_eyebrow: "Unsere Geschichte",
+        story_title: "Drei ehrliche Sätze über uns",
+        story_1: "Entstanden in der Prüfungswoche: Gestartet in einer WG-Küche, weil der Unikaffee nach Verzweiflung schmeckte.",
+        story_2: "Radikal fair: Bohnen im Direkthandel mit Kooperativen in Kolumbien und Äthiopien zu 40% über Fairtrade-Niveau.",
+        story_3: "Kein Kaffeesnobismus: Hafermilch? Pistazienschaum? Entkoffeiniert? Wir urteilen nicht. Bring deinen Hund mit.",
+        visit_eyebrow: "Vorbeikommen",
+        visit_title: "Hier findest du uns",
+        visit_desc: "3 Gehminuten von Russell Square & Euston entfernt. Achte auf die gelb gestreifte Markise.",
+        hours_weekday: "Montag – Freitag",
+        hours_sat: "Samstag",
+        hours_sun: "Sonntag",
+        study_eyebrow: "Für digitale Nomaden",
+        study_title: "Der Arbeitsplatz-Test",
+        wifi_spec: "450 Mbit/s Highspeed-Campus-WLAN.",
+        copy_pw: "Passwort kopieren",
+        copied: "Kopiert!",
+        plugs_label: "🔌 Steckdosen je Tisch:",
+        noise_label: "🎵 Lautstärkepegel:",
+        dog_treats: "🐾 Hundeleckerlis: Immer an der Bar",
+        footer_title: "Bleib auf dem Laufenden",
+        footer_sub: "Monatliche Geheimgetränke, Studentenrabatte und Hundefotos.",
+        subscribe: "Abonnieren",
+        ai_note_title: "So funktioniert unser Stimmungs-Finder",
+        ai_note_body: "100% lokal im Browser. Kein Tracking, keine externen Server.",
+        your_order: "Deine Bestellung",
+        cart_empty_title: "Deine Tasche hat Durst",
+        cart_empty_lead: "Du hast noch nichts hinzugefügt. Stöbere im Menü!",
+        browse_menu: "Karte ansehen",
+        dog_tip_title: "Leckerli-Kasse für Waffles",
+        dog_tip_sub: "Trinkgeld für unseren Dackel",
+        pickup_name: "Name für Abholung",
+        barista_note: "Notiz an den Barista",
+        total: "Gesamt",
+        place_order: "Bestellung abschicken",
+        order_sent: "Bestellung an den Barista gesendet!",
+        ready_at: "Voraussichtliche Zubereitungszeit:",
+        step_ticket: "1. Bon gedruckt & Bohnen abgewogen",
+        step_pulling: "2. Espresso läuft & Milch wird geschäumt",
+        step_pouring: "3. Eingegossen & Sticker aufgeklebt",
+        step_ready: "4. Bereit zur Abholung an der Theke!",
+        order_another: "Noch etwas bestellen"
+      },
+      ja: {
+        header_hours: "本日の営業時間 · 7:30 – 21:00",
+        order_btn: "注文する",
+        hero_badge_student: "⚡ 学生運営のスペシャリティカフェ",
+        hero_badge_oat: "✨ 基本オートミルク使用",
+        hero_headline_html: "<mark>タブを47個開いて作業するあなたへ</mark>、飲むモチベーションを。",
+        hero_lead: "倫理的調達のシングルオリジン焙煎、宇治産一番茶抹茶、焼きたてのペストリー。朝9時の講義や大事な会議に間に合うようスピーディーに提供します。",
+        hero_order_cta: "今すぐ注文",
+        hero_build_cta: "ドリンクをカスタム",
+        hero_pickup_time: "受取目安: 約4分",
+        hero_wifi_spec: "ギガビットWi-Fi & 電源完備",
+        hero_dogs: "ワンちゃん歓迎",
+        hero_sticker_prompt: "🏷️ 下のステッカーをタップして画面にペタッと貼ろう：",
+        hero_clear_stickers: "ステッカーを剥がす",
+        mood_eyebrow: "スマートドリンク診断",
+        mood_title: "いまの気分は？",
+        mood_sub: "今の気分をタップするだけで、バリスタおすすめの1杯を瞬時にご提案。",
+        mood_energy: "エナジーが欲しい",
+        mood_cozy: "ほっこり癒やされたい",
+        mood_fresh: "リフレッシュしたい",
+        mood_sweet: "甘いご褒美",
+        menu_eyebrow: "メニューラインナップ",
+        menu_title: "手作りの厳選メニュー",
+        menu_sub: "少量ずつ丁寧に焙煎し、自家製シロップと生分解性カップでお届けします。",
+        cat_all: "すべて",
+        cat_coffee: "コーヒー & ショット",
+        cat_matcha: "抹茶 & ティー",
+        cat_fizzy: "アイス & スパークリング",
+        cat_food: "ベイク & トースト",
+        surprise_me: "おまかせ！",
+        vegan_only: "ヴィーガンのみ",
+        search_placeholder: "メニューを検索...",
+        builder_eyebrow: "ドリンクラボ",
+        builder_title: "じぶん専用の一杯を調合",
+        builder_sub: "ホット/アイスの切り替えやミルク・ショットの調整で、カップがリアルタイムに変化します。",
+        btn_iced: "🧊 アイス",
+        btn_hot: "🔥 ホット",
+        step_1: "1. サイズを選択",
+        step_2: "2. ミルクを選択",
+        step_3: "3. エスプレッソの濃さ",
+        step_4: "4. トッピング追加",
+        btn_add_custom: "カスタムドリンクを注文袋へ",
+        caffeine_est: "⚡ 推定カフェイン量:",
+        focus_index: "🎯 集中度指数:",
+        loyalty_eyebrow: "8杯の習慣",
+        loyalty_title: "デジタルスタンプカード",
+        loyalty_sub: "ドリンク8杯ご購入で1杯無料！オンライン注文時に自動スタンプされます。",
+        loyalty_saved_note: "💡 スタンプはお使いのブラウザに安全に保存されます。",
+        punch_demo: "テストスタンプを押す",
+        reset_btn: "リセット",
+        congrats_free: "🎉 おめでとうございます！スタンプ8個達成！バリスタにこの画面を見せるとお好きなドリンクが1杯無料になります。クーポンコード: OVERTHINKER-FREE-8",
+        vibes_eyebrow: "写真 & コミュニティ",
+        vibes_title: "バイブスの壁",
+        vibes_sub: "カウンターの日常、陽のあたる窓際、夜遅くの勉強風景。",
+        story_eyebrow: "ストーリー",
+        story_title: "わたしたちについての3つの本音",
+        story_1: "テスト週間に誕生：大学図書館のコーヒーがあまりにも不味かったため、学生アパートの台所で淹れ始めたのが原点です。",
+        story_2: "徹底したエシカル調達：コロンビアとエチオピアの小規模農家から直接買い付け、フェアトレード基準の40%以上高い価格で還元しています。",
+        story_3: "コーヒー通気取りなし：オートミルクも、ピスタチオフォームも、ディカフェも大歓迎。ノートPCや愛犬と一緒にごゆっくりどうぞ。",
+        visit_eyebrow: "アクセス",
+        visit_title: "店舗のご案内",
+        visit_desc: "ラッセルスクエア駅およびユーストン駅から徒歩3分。黄色いストライプの日除けが目印です。",
+        hours_weekday: "月曜 – 金曜",
+        hours_sat: "土曜",
+        hours_sun: "日曜",
+        study_eyebrow: "ノマド作業フレンドリー仕様",
+        study_title: "快適ワークスペース診断",
+        wifi_spec: "下り上り最大450Mbpsの高速キャンパス回線。",
+        copy_pw: "パスワードをコピー",
+        copied: "コピー完了！",
+        plugs_label: "🔌 コンセント設置率:",
+        noise_label: "🎵 店内BGM音量:",
+        dog_treats: "🐾 ワンちゃん用おやつ: カウンターで無料配布",
+        footer_title: "最新情報をチェック",
+        footer_sub: "月替わりの限定ドリンクや学生限定クーポンをお届けします。",
+        subscribe: "登録する",
+        ai_note_title: "気分診断AIの仕組みについて",
+        ai_note_body: "ブラウザ内のみで軽量動作する判定アルゴリズムです。個人情報やトラッキングデータは外部に一切送信されません。",
+        your_order: "ご注文内容",
+        cart_empty_title: "カートは空っぽです",
+        cart_empty_lead: "まだドリンクが入っていません。メニューからお気に入りを探してみましょう！",
+        browse_menu: "メニューを見る",
+        dog_tip_title: "看板犬ワッフルのおやつ募金",
+        dog_tip_sub: "ダックスフントのワッフルにチップを贈る",
+        pickup_name: "お受取名",
+        barista_note: "バリスタへのメモ（任意）",
+        total: "合計",
+        place_order: "注文を確定する",
+        order_sent: "バリスタへ注文が送信されました！",
+        ready_at: "できあがり目安:",
+        step_ticket: "1. 伝票発行・豆計量中",
+        step_pulling: "2. エスプレッソ抽出＆ミルク温め中",
+        step_pouring: "3. 注ぎ入れ＆ステッカー貼付中",
+        step_ready: "4. カウンターで受取準備完了！",
+        order_another: "もう一杯注文する"
+      }
+    };
+
+    /* 14 Handcrafted Menu Items with base GBP prices */
+    const MENU_ITEMS = [
+      {
+        id: "iced-cloud-oat",
+        name: "Iced Cloud Oat Latte",
+        category: "coffee",
+        basePrice: 4.40,
+        tags: ["bestseller", "vegan"],
+        desc: "Double espresso poured over chilled Barista Oat, crowned with thick salted cold foam.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><path d="M10 8L14 36H26L30 8H10Z" fill="#F4EFE6" stroke="#20150F" stroke-width="2.5"/><path d="M12 20L14 36H26L28 20H12Z" fill="#D4A373"/><path d="M10 8C10 8 15 5 20 6C25 7 30 8 30 8L29 14H11L10 8Z" fill="#FFFFFF" stroke="#20150F" stroke-width="1.5"/><line x1="22" y1="2" x2="20" y2="24" stroke="#FF6B8B" stroke-width="2.5"/></svg>`
+      },
+      {
+        id: "strawberry-matcha",
+        name: "Strawberry Matcha Velvet",
+        category: "matcha",
+        basePrice: 4.80,
+        tags: ["new", "bestseller", "vegan"],
+        desc: "Uji Ceremonial matcha floated over fresh house-made strawberry compote and creamy oat milk.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><path d="M11 9L15 36H25L29 9H11Z" fill="#FFF" stroke="#20150F" stroke-width="2.5"/><path d="M14 26L15 36H25L26 26H14Z" fill="#FF6B8B"/><path d="M12 10L13 22H27L28 10H12Z" fill="#43AA8B"/></svg>`
+      },
+      {
+        id: "cardamom-cold-brew",
+        name: "Cardamom Brown Butter Cold Brew",
+        category: "coffee",
+        basePrice: 4.50,
+        tags: ["new"],
+        desc: "20-hour steep Ethiopian cold brew swirled with spiced brown butter syrup and crushed cardamom.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><rect x="10" y="10" width="20" height="26" rx="4" fill="#3D2B1F" stroke="#20150F" stroke-width="2.5"/><circle cx="20" cy="22" r="5" fill="#FFD166"/><line x1="16" y1="6" x2="24" y2="6" stroke="#20150F" stroke-width="3"/></svg>`
+      },
+      {
+        id: "yuzu-espresso-tonic",
+        name: "Yuzu Espresso Tonic",
+        category: "fizzy",
+        basePrice: 4.60,
+        tags: ["vegan"],
+        desc: "Sparkling botanical tonic water, cold Japanese yuzu juice, and a floating double shot of espresso.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><path d="M10 6L14 36H26L30 6H10Z" fill="#E8F4F8" stroke="#20150F" stroke-width="2.5"/><circle cx="16" cy="22" r="2" fill="#43AA8B"/><circle cx="23" cy="28" r="1.5" fill="#43AA8B"/><circle cx="20" cy="16" r="2.5" fill="#FFD166"/><path d="M8 6H32" stroke="#20150F" stroke-width="2.5"/></svg>`
+      },
+      {
+        id: "pistachio-cortado",
+        name: "Pistachio Praline Cortado",
+        category: "coffee",
+        basePrice: 3.90,
+        tags: ["bestseller"],
+        desc: "Equal parts bold ristretto and warm pistachio microfoam with toasted nut dusting.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><rect x="10" y="14" width="20" height="20" rx="3" fill="#6F4E37" stroke="#20150F" stroke-width="2.5"/><rect x="8" y="12" width="24" height="4" rx="2" fill="#43AA8B"/><path d="M30 18H34C35.5 18 36.5 19 36.5 20.5C36.5 22 35.5 23 34 23H30" stroke="#20150F" stroke-width="2"/></svg>`
+      },
+      {
+        id: "hot-honey-chai",
+        name: "Hot Honey Spiced Chai",
+        category: "matcha",
+        basePrice: 4.20,
+        tags: ["spicy"],
+        desc: "Slow-brewed loose black tea, fresh ginger, cinnamon sticks, and fiery chili-infused wildflower honey.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><path d="M8 15C8 28 14 34 20 34C26 34 32 28 32 15H8Z" fill="#E07A5F" stroke="#20150F" stroke-width="2.5"/><path d="M17 6C17 10 15 11 15 13" stroke="#20150F" stroke-width="2" stroke-linecap="round"/><path d="M23 5C23 9 21 10 21 12" stroke="#20150F" stroke-width="2" stroke-linecap="round"/></svg>`
+      },
+      {
+        id: "lavender-butterfly-fizz",
+        name: "Lavender Butterfly Sparkler",
+        category: "fizzy",
+        basePrice: 4.10,
+        tags: ["vegan", "new"],
+        desc: "Vibrant butterfly pea tea poured over lavender syrup, lime juice, and sparkling soda.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><path d="M12 8L15 35H25L28 8H12Z" fill="#CDB4DB" stroke="#20150F" stroke-width="2.5"/><circle cx="18" cy="18" r="3" fill="#FAF7F2"/><circle cx="21" cy="27" r="2" fill="#FAF7F2"/><path d="M20 2V35" stroke="#FFD166" stroke-width="2"/></svg>`
+      },
+      {
+        id: "classic-flat-white",
+        name: "The Purist Flat White",
+        category: "coffee",
+        basePrice: 3.60,
+        tags: ["bestseller"],
+        desc: "Silky textured micro-foam over double ristretto. Pure origin chocolate & toasted hazelnut notes.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><path d="M8 16H32V26C32 31 27 35 20 35C13 35 8 31 8 26V16Z" fill="#F4EFE6" stroke="#20150F" stroke-width="2.5"/><path d="M15 22C17 24 23 24 25 22" stroke="#6F4E37" stroke-width="2.5" stroke-linecap="round"/></svg>`
+      },
+      {
+        id: "ceremonial-hojicha",
+        name: "Roasted Hojicha Latte",
+        category: "matcha",
+        basePrice: 4.30,
+        tags: ["vegan"],
+        desc: "Nutty, caramel-roasted Japanese green tea stoneground with warm oat milk. Naturally low caffeine.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><path d="M10 14H30V26C30 30 26 34 20 34C14 34 10 30 10 26V14Z" fill="#9C6644" stroke="#20150F" stroke-width="2.5"/><circle cx="20" cy="23" r="4" fill="#FAF7F2"/></svg>`
+      },
+      {
+        id: "grapefruit-spritz",
+        name: "Pink Grapefruit & Rosemary Fizz",
+        category: "fizzy",
+        basePrice: 3.90,
+        tags: ["vegan"],
+        desc: "Fresh pressed ruby grapefruit, crushed garden rosemary, and bubbling tonic on rocks.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><path d="M11 7L14 35H26L29 7H11Z" fill="#FF85A1" stroke="#20150F" stroke-width="2.5"/><line x1="20" y1="2" x2="20" y2="35" stroke="#43AA8B" stroke-width="2.5"/></svg>`
+      },
+      {
+        id: "kimchi-cheddar-toastie",
+        name: "Kimchi & Aged Cheddar Toastie",
+        category: "food",
+        basePrice: 5.80,
+        tags: ["bestseller", "spicy"],
+        desc: "Fermented house kimchi and sharp Montgomery cheddar toasted crispy on seeded sourdough.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><path d="M6 24L20 8L34 24L20 34L6 24Z" fill="#FFD166" stroke="#20150F" stroke-width="2.5"/><path d="M14 22L20 16L26 22" stroke="#E63946" stroke-width="3" stroke-linecap="round"/></svg>`
+      },
+      {
+        id: "cardamom-morning-bun",
+        name: "Scandinavian Cardamom Bun",
+        category: "food",
+        basePrice: 3.80,
+        tags: ["bestseller", "vegan"],
+        desc: "Soft knotted sourdough brioche infused with freshly crushed cardamom and pearl sugar.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><circle cx="20" cy="20" r="14" fill="#DDA15E" stroke="#20150F" stroke-width="2.5"/><path d="M14 18C16 14 24 14 26 18C28 22 20 26 16 23" stroke="#20150F" stroke-width="2.5" stroke-linecap="round"/></svg>`
+      },
+      {
+        id: "miso-caramel-cookie",
+        name: "Brown Butter Miso Cookie",
+        category: "food",
+        basePrice: 3.20,
+        tags: ["new"],
+        desc: "Chewy Valrhona dark chocolate chunk cookie with umami white miso and Maldon sea salt flakes.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><circle cx="20" cy="20" r="15" fill="#C68B59" stroke="#20150F" stroke-width="2.5"/><circle cx="15" cy="16" r="2.5" fill="#20150F"/><circle cx="25" cy="18" r="2.5" fill="#20150F"/><circle cx="18" cy="25" r="2.5" fill="#20150F"/></svg>`
+      },
+      {
+        id: "avocado-furikake-toast",
+        name: "Avocado & Furikake Sourdough",
+        category: "food",
+        basePrice: 5.50,
+        tags: ["vegan"],
+        desc: "Smashed Hass avocado, sesame nori seasoning, pickled shallots, and lemon oil drizzle.",
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><rect x="8" y="12" width="24" height="18" rx="4" fill="#E9EDC9" stroke="#20150F" stroke-width="2.5"/><ellipse cx="20" cy="21" rx="8" ry="5" fill="#43AA8B"/><circle cx="17" cy="20" r="1" fill="#20150F"/><circle cx="23" cy="21" r="1" fill="#20150F"/></svg>`
+      }
+    ];
+
+    /* Mood Suggestions */
+    const MOOD_SUGGESTIONS = {
+      energy: [
+        { name: "Iced Cloud Oat Latte", basePrice: 4.40, reason: "Double espresso jolt wrapped in smooth cold foam.", itemRef: "iced-cloud-oat", icon: `⚡` },
+        { name: "Cardamom Brown Butter Cold Brew", basePrice: 4.50, reason: "Slow-brewed rocket fuel with aromatic spice.", itemRef: "cardamom-cold-brew", icon: `☕` },
+        { name: "Yuzu Espresso Tonic", basePrice: 4.60, reason: "Fizzy citrus electric buzz to reset your focus.", itemRef: "yuzu-espresso-tonic", icon: `🍋` }
+      ],
+      cozy: [
+        { name: "Hot Honey Spiced Chai", basePrice: 4.20, reason: "Like a cashmere sweater in liquid form.", itemRef: "hot-honey-chai", icon: `🧸` },
+        { name: "The Purist Flat White", basePrice: 3.60, reason: "Rich, velvet warmth for slow rainy afternoons.", itemRef: "classic-flat-white", icon: `☕` },
+        { name: "Scandinavian Cardamom Bun", basePrice: 3.80, reason: "Fresh from the oven, buttery and fragrant.", itemRef: "cardamom-morning-bun", icon: `🥐` }
+      ],
+      fresh: [
+        { name: "Lavender Butterfly Sparkler", basePrice: 4.10, reason: "Light, floral hydration with zero caffeine jitters.", itemRef: "lavender-butterfly-fizz", icon: `🌸` },
+        { name: "Pink Grapefruit & Rosemary Fizz", basePrice: 3.90, reason: "Crisp botanical sparkles that awaken your senses.", itemRef: "grapefruit-spritz", icon: `✨` },
+        { name: "Roasted Hojicha Latte", basePrice: 4.30, reason: "Earthy, nutty reset with a soothing finish.", itemRef: "ceremonial-hojicha", icon: `🍵` }
+      ],
+      sweet: [
+        { name: "Strawberry Matcha Velvet", basePrice: 4.80, reason: "Sweet berry jam meets antioxidant ceremonial tea.", itemRef: "strawberry-matcha", icon: `🍓` },
+        { name: "Brown Butter Miso Cookie", basePrice: 3.20, reason: "Sweet & salty chocolate bliss with flaky salt.", itemRef: "miso-caramel-cookie", icon: `🍪` },
+        { name: "Pistachio Praline Cortado", basePrice: 3.90, reason: "Decadent toasted pistachio cream and ristretto.", itemRef: "pistachio-cortado", icon: `🌰` }
+      ]
+    };
+
+    /* Sound Synthesizer */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playPop() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.09);
+        } catch(e) {}
+      }
+      playPunch() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(170, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(60, this.ctx.currentTime + 0.12);
+          gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.13);
+        } catch(e) {}
+      }
+      playChime() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            const startTime = this.ctx.currentTime + (idx * 0.07);
+            gain.gain.setValueAtTime(0.12, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + 0.36);
+          });
+        } catch(e) {}
+      }
+    }
+    const audio = new SoundEngine();
+
+    /* State Management */
+
+    /* ==========================================================================
+       API CLIENT — talks to the Overthinker Café backend (Node + Express + SQLite)
+       When the backend is running, menu, orders and payments are served live.
+       Falls back to the embedded MENU_ITEMS / localStorage if the backend is unreachable.
+       ========================================================================== */
+    const API_BASE = window.location.origin;
+
+    async function apiFetch(path, opts = {}) {
+      const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
+      const headers = { 'Content-Type': 'application/json', ...opts.headers };
+      const res = await fetch(url, { ...opts, headers });
+      if (!res.ok) {
+        let detail = '';
+        try { detail = await res.text(); } catch (e) {}
+        throw new Error(`API ${res.status} ${res.statusText}${detail ? ' · ' + detail : ''}`);
+      }
+      if (res.status === 204) return null;
+      const ct = res.headers.get('content-type') || '';
+      if (ct.includes('application/json')) return res.json();
+      return res.text();
+    }
+
+    /* Backend availability flag — set true once we confirm the server responds. */
+    let backendOnline = false;
+    async function probeBackend() {
+      try {
+        await apiFetch('/api/health');
+        backendOnline = true;
+        console.log('[api] backend online');
+      } catch (e) {
+        backendOnline = false;
+        console.log('[api] backend offline — using embedded menu + localStorage cart');
+      }
+    }
+    /* Menu cache — populated from GET /api/menu/items when the backend is online.
+       Rendered items are mapped into the frontend's shape (basePrice, tags, svgIcon). */
+    let menuCache = null;
+
+    function mapBackendItem(b) {
+      const tags = [];
+      if (b.is_bestseller) tags.push('bestseller');
+      if (b.is_vegan) tags.push('vegan');
+      if (b.is_new) tags.push('new');
+      return {
+        id: b.slug,
+        name: b.name,
+        category: b.category_slug || 'other',
+        basePrice: (b.base_price_minor || 0) / 100,
+        tags,
+        desc: b.description || '',
+        available: !!b.is_available,
+        svgIcon: `<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><path d="M11 9L15 36H25L29 9H11Z" fill="#F4EFE6" stroke="#20150F" stroke-width="2.5"/><path d="M13 20L14.5 36H25.5L27 20H13Z" fill="#D4A373"/><path d="M11 9C11 9 15 6 20 7C25 8 29 9 29 9" stroke="#20150F" stroke-width="1.5"/><line x1="24" y1="4" x2="22" y2="24" stroke="#FF6B8B" stroke-width="2.5"/></svg>`,
+      };
+    }
+
+    async function loadMenuFromBackend() {
+      if (!backendOnline) { menuCache = null; return; }
+      try {
+        const res = await apiFetch('/api/menu/items');
+        if (res && Array.isArray(res.items) && res.items.length > 0) {
+          menuCache = res.items.map(mapBackendItem);
+          console.log('[api] menu loaded from backend:', menuCache.length, 'items');
+        } else {
+          menuCache = null;
+        }
+      } catch (e) {
+        console.log('[api] menu fetch failed — falling back to embedded menu', e.message);
+        menuCache = null;
+      }
+    }
+
+    /* Return the active menu source: backend cache when online, else embedded. */
+    function getActiveMenu() {
+      return (backendOnline && menuCache && menuCache.length > 0) ? menuCache : MENU_ITEMS;
+    }
+
+
+
+    const State = {
+      cart: JSON.parse(localStorage.getItem('ovr_cart') || '[]'),
+      stamps: parseInt(localStorage.getItem('ovr_stamps') || '0', 10),
+      theme: localStorage.getItem('ovr_theme') || 'light',
+      sound: localStorage.getItem('ovr_sound') !== 'false',
+      currency: localStorage.getItem('ovr_currency') || 'GBP',
+      language: localStorage.getItem('ovr_lang') || 'en',
+      dogTip: false,
+      activeCategory: 'all',
+      veganOnly: false,
+      searchQuery: '',
+      currentMood: 'energy',
+
+      customDrink: {
+        temp: 'iced',
+        size: '12oz',
+        sizeBase: 3.90,
+        milk: 'Oat',
+        milkBase: 0,
+        shots: 'Double',
+        shotsBase: 0.50,
+        addons: []
+      },
+
+      saveCart() {
+        localStorage.setItem('ovr_cart', JSON.stringify(this.cart));
+        updateCartUI();
+      },
+
+      saveStamps() {
+        localStorage.setItem('ovr_stamps', this.stamps.toString());
+        renderStampCard();
+      }
+    };
+
+    /* Price Formatter */
+    function formatPrice(baseGbp) {
+      const curr = CURRENCIES[State.currency] || CURRENCIES.GBP;
+      const converted = baseGbp * curr.rate;
+      if (curr.decimals === 0) {
+        return `${curr.symbol}${Math.round(converted)}`;
+      }
+      return `${curr.symbol}${converted.toFixed(curr.decimals)}`;
+    }
+
+    /* Translation Text Helper */
+    function t(key) {
+      const lang = TRANSLATIONS[State.language] || TRANSLATIONS.en;
+      return lang[key] || TRANSLATIONS.en[key] || key;
+    }
+
+    /* Apply Internationalization to DOM */
+    function applyLanguage(langKey) {
+      State.language = langKey;
+      localStorage.setItem('ovr_lang', langKey);
+      document.documentElement.setAttribute('lang', langKey);
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+      });
+
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        el.placeholder = t(key);
+      });
+
+      // Special Hero Headline HTML
+      const heroHead = document.getElementById('hero-headline-el');
+      if (heroHead) {
+        heroHead.innerHTML = t('hero_headline_html');
+      }
+
+      // Re-render components
+      renderMoodSuggestions(State.currentMood);
+      renderMenu();
+      updateDrinkBuilder();
+      updateCartUI();
+      renderStampCard();
+    }
+
+    /* Toast Notification */
+    function showToast(msg, icon = '✨') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+      container.appendChild(toast);
+      audio.playPop();
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(() => toast.remove(), 250);
+      }, 2400);
+    }
+
+    /* Mood Suggestions */
+    function renderMoodSuggestions(moodKey) {
+      State.currentMood = moodKey;
+      const container = document.getElementById('mood-suggestions-container');
+      const items = MOOD_SUGGESTIONS[moodKey] || MOOD_SUGGESTIONS.energy;
+      
+      container.innerHTML = items.map(item => `
+        <div class="mood-item-card">
+          <div class="mood-item-top">
+            <div class="mood-item-icon">${item.icon}</div>
+            <div>
+              <div class="mood-item-name">${item.name}</div>
+              <div class="mood-item-reason">"${item.reason}"</div>
+            </div>
+          </div>
+          <div class="mood-item-bottom">
+            <span class="mood-price">${formatPrice(item.basePrice)}</span>
+            <button class="btn-add-quick" onclick="handleQuickAdd('${item.itemRef}', '${item.name}', ${item.basePrice})">
+              <span>+ Add</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* Menu Rendering */
+    function renderMenu() {
+      const container = document.getElementById('menu-grid-container');
+      const query = State.searchQuery.toLowerCase().trim();
+
+      const filtered = getActiveMenu().filter(item => {
+        const matchesCategory = State.activeCategory === 'all' || item.category === State.activeCategory;
+        const matchesVegan = !State.veganOnly || item.tags.includes('vegan');
+        const matchesQuery = !query || item.name.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query);
+        return matchesCategory && matchesVegan && matchesQuery;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="menu-empty">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+            <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.35rem;">No drinks found</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Try clearing your search or removing the vegan filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => `
+        <article class="menu-card" id="card-${item.id}">
+          <div>
+            <div class="menu-card-top">
+              <div class="menu-card-icon">${item.svgIcon}</div>
+              <div class="menu-card-meta">
+                <div class="menu-tags">
+                  ${item.tags.map(t => `<span class="menu-tag tag-${t}">${t}</span>`).join('')}
+                </div>
+                <h3 class="menu-card-title">${item.name}</h3>
+              </div>
+            </div>
+            <p class="menu-card-desc">${item.desc}</p>
+          </div>
+          <div class="menu-card-bottom">
+            <span class="menu-card-price">${formatPrice(item.basePrice)}</span>
+            <button class="btn-add-cart" onclick="addToCart('${item.id}', '${item.name.replace(/'/g, "\\'")}', ${item.basePrice})">
+              <span>${t('order_btn')}</span>
+            </button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    /* Drink Roulette / Surprise Me */
+    function spinSurpriseMe() {
+      audio.playPop();
+      const count = MENU_ITEMS.length;
+      let iterations = 0;
+      const maxIterations = 14;
+      const interval = setInterval(() => {
+        const randomIdx = Math.floor(Math.random() * count);
+        const item = MENU_ITEMS[randomIdx];
+        audio.playPop();
+        
+        document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('highlight-flash'));
+        const el = document.getElementById(`card-${item.id}`);
+        if (el) el.classList.add('highlight-flash');
+
+        iterations++;
+        if (iterations >= maxIterations) {
+          clearInterval(interval);
+          const chosen = MENU_ITEMS[Math.floor(Math.random() * count)];
+          State.activeCategory = 'all';
+          State.searchQuery = '';
+          document.getElementById('menu-search-input').value = '';
+          document.querySelectorAll('.category-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-category') === 'all'));
+          renderMenu();
+          
+          setTimeout(() => {
+            const finalCard = document.getElementById(`card-${chosen.id}`);
+            if (finalCard) {
+              finalCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              finalCard.classList.add('highlight-flash');
+              audio.playChime();
+              showToast(`Fate chose: "${chosen.name}"! 🎲`, '☕');
+            }
+          }, 100);
+        }
+      }, 90);
+    }
+
+    /* Cart & Drawer Logic */
+    function addToCart(id, name, basePrice, details = '') {
+      const existing = State.cart.find(i => i.id === id && i.details === details);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        State.cart.push({ id, name, basePrice, qty: 1, details });
+      }
+      State.saveCart();
+      showToast(`Added ${name} to bag`, '✨');
+    }
+
+    function handleQuickAdd(refId, name, basePrice) {
+      addToCart(refId, name, basePrice);
+    }
+
+    function updateCartItemQty(index, delta) {
+      if (!State.cart[index]) return;
+      State.cart[index].qty += delta;
+      if (State.cart[index].qty <= 0) {
+        State.cart.splice(index, 1);
+      }
+      State.saveCart();
+    }
+
+    function removeCartItem(index) {
+      State.cart.splice(index, 1);
+      State.saveCart();
+      showToast('Item removed', '🗑️');
+    }
+
+    function updateCartUI() {
+      const count = State.cart.reduce((sum, item) => sum + item.qty, 0);
+      let subtotalBase = State.cart.reduce((sum, item) => sum + (item.basePrice * item.qty), 0);
+      if (State.dogTip) subtotalBase += 0.50;
+
+      document.getElementById('header-cart-count').textContent = count;
+      document.getElementById('drawer-items-count').textContent = `${count} items`;
+      document.getElementById('drawer-total-amount').textContent = formatPrice(subtotalBase);
+
+      const mobileBar = document.getElementById('mobile-order-bar');
+      if (count > 0) {
+        mobileBar.classList.add('visible');
+        document.getElementById('mobile-cart-items-text').textContent = `${count} drinks`;
+        document.getElementById('mobile-cart-total').textContent = formatPrice(subtotalBase);
+      } else {
+        mobileBar.classList.remove('visible');
+      }
+
+      const container = document.getElementById('cart-items-container');
+      const emptyBox = document.getElementById('cart-empty-box');
+      const formBox = document.getElementById('drawer-form-box');
+      const dogBox = document.getElementById('dog-tip-box');
+      const footer = document.getElementById('drawer-footer');
+
+      if (State.cart.length === 0) {
+        container.innerHTML = '';
+        emptyBox.style.display = 'block';
+        formBox.style.display = 'none';
+        dogBox.style.display = 'none';
+        footer.style.display = 'none';
+      } else {
+        emptyBox.style.display = 'none';
+        formBox.style.display = 'flex';
+        dogBox.style.display = 'flex';
+        footer.style.display = 'block';
+
+        container.innerHTML = State.cart.map((item, idx) => `
+          <div class="cart-item">
+            <div>
+              <div class="cart-item-title">${item.name}</div>
+              ${item.details ? `<div class="cart-item-sub">${item.details}</div>` : ''}
+              <div class="qty-stepper">
+                <button class="qty-btn" onclick="updateCartItemQty(${idx}, -1)" aria-label="Decrease quantity">-</button>
+                <span class="qty-val">${item.qty}</span>
+                <button class="qty-btn" onclick="updateCartItemQty(${idx}, 1)" aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+            <div class="cart-item-price-side">
+              <span class="cart-item-total">${formatPrice(item.basePrice * item.qty)}</span>
+              <button class="cart-remove-btn" onclick="removeCartItem(${idx})">Remove</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function openDrawer() {
+      document.getElementById('drawer-backdrop').classList.add('open');
+      document.getElementById('order-success-view').style.display = 'none';
+      document.getElementById('cart-content-view').style.display = 'block';
+      audio.playPop();
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawer-backdrop').classList.remove('open');
+    }
+
+    /* ==========================================================================
+       CHECKOUT — persists orders to the backend and runs verified Razorpay
+       payment when configured. Falls back to the local simulated flow when the
+       backend is offline so the storefront always still works.
+       ========================================================================== */
+
+    function clearCart() {
+      State.cart = [];
+      State.dogTip = false;
+      const cb = document.getElementById('cb-dog-tip');
+      if (cb) cb.checked = false;
+      State.saveCart();
+    }
+
+    function showSuccess(orderNumber, customerName, readyMins) {
+      document.getElementById('success-order-num').textContent = orderNumber;
+      document.getElementById('success-pickup-name').textContent = `Ready for: ${customerName}`;
+      document.getElementById('success-ready-time').textContent = `~${readyMins}–${readyMins + 3} mins`;
+
+      document.getElementById('cart-content-view').style.display = 'none';
+      document.getElementById('drawer-footer').style.display = 'none';
+      document.getElementById('order-success-view').style.display = 'block';
+
+      audio.playChime();
+      if (State.stamps >= 8) triggerConfetti();
+
+      const steps = [
+        document.getElementById('prep-step-1'),
+        document.getElementById('prep-step-2'),
+        document.getElementById('prep-step-3'),
+        document.getElementById('prep-step-4')
+      ];
+      steps.forEach(s => { s.className = 'tracker-step'; });
+      steps[0].classList.add('active');
+      setTimeout(() => { steps[0].className = 'tracker-step completed'; steps[1].classList.add('active'); audio.playPop(); }, 2500);
+      setTimeout(() => { steps[1].className = 'tracker-step completed'; steps[2].classList.add('active'); audio.playPop(); }, 5000);
+      setTimeout(() => { steps[2].className = 'tracker-step completed'; steps[3].classList.add('active'); audio.playChime(); }, 7500);
+    }
+
+    async function startRazorpayPayment(orderNumber, amountMinor) {
+      if (!amountMinor || amountMinor <= 0) return;
+      if (typeof Razorpay === 'undefined') { console.log('[pay] Razorpay SDK not loaded'); return; }
+      let rzp;
+      try {
+        rzp = await apiFetch('/api/payments/create-order', {
+          method: 'POST',
+          body: JSON.stringify({ orderNumber, amountMinor, currency: 'INR' }),
+        });
+      } catch (e) {
+        console.log('[pay] payments not configured / create-order failed:', e.message);
+        return;
+      }
+      if (!rzp || !rzp.razorpayOrderId) return;
+
+      const options = {
+        key: rzp.keyId,
+        amount: rzp.amount,
+        currency: rzp.currency,
+        order_id: rzp.razorpayOrderId,
+        name: 'Overthinker Café',
+        description: `Order ${orderNumber}`,
+        theme: { color: '#43aa8b' },
+        handler: async function (response) {
+          try {
+            await apiFetch('/api/payments/verify', {
+              method: 'POST',
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                orderNumber,
+              }),
+            });
+            showToast('Payment verified — order confirmed!', '💳');
+          } catch (e) {
+            console.error('[pay] verify failed', e);
+            showToast('Payment could not be verified', '⚠️');
+          }
+        },
+        modal: { ondismiss: function () { showToast('Payment window closed — order saved as pending', 'ℹ️'); } },
+      };
+      new Razorpay(options).open();
+    }
+
+    async function handleCheckout() {
+      if (State.cart.length === 0) return;
+
+      const nameInput = document.getElementById('pickup-name');
+      const customerName = nameInput.value.trim() || 'Caffeine Seeker';
+      const phoneInput = document.getElementById('pickup-phone');
+      const customerPhone = phoneInput ? phoneInput.value.trim() : '';
+      const noteInput = document.getElementById('barista-note');
+      const note = noteInput ? noteInput.value.trim() : '';
+
+      State.stamps = Math.min(8, State.stamps + 1);
+      State.saveStamps();
+
+      const items = State.cart.map(i => ({
+        slug: i.id,
+        name: i.name,
+        quantity: i.qty,
+        unitPriceMinor: Math.round(i.basePrice * 100),
+        lineTotalMinor: Math.round(i.basePrice * 100) * i.qty,
+        customisation: (i.details || note) ? { note: i.details || note } : undefined,
+      }));
+      const tipMinor = State.dogTip ? 50 : 0;
+      const subtotalMinor = State.cart.reduce((s, i) => s + Math.round(i.basePrice * 100) * i.qty, 0) + tipMinor;
+      const taxMinor = 0;
+      const totalMinor = subtotalMinor + taxMinor;
+
+      if (backendOnline) {
+        try {
+          const res = await apiFetch('/api/orders', {
+            method: 'POST',
+            body: JSON.stringify({ customerName, customerPhone, type: 'pickup', items, subtotalMinor, taxMinor, tipMinor, totalMinor }),
+          });
+          const orderNumber = res.order.order_number;
+          clearCart();
+          await showSuccess(orderNumber, customerName, 8);
+          await startRazorpayPayment(orderNumber, res.order.total_minor);
+          return;
+        } catch (e) {
+          console.log('[checkout] backend order failed, using local fallback', e);
+          showToast('Backend unreachable — order kept locally', '⚠️');
+        }
+      }
+
+      // Offline fallback (simulated)
+      const randomOrderNum = `#OVR-${Math.floor(100 + Math.random() * 899)}`;
+      const readyMins = Math.floor(6 + Math.random() * 4);
+      clearCart();
+      await showSuccess(randomOrderNum, customerName, readyMins);
+    }
+
+    /* Build-Your-Own-Drink Customizer */
+    function updateDrinkBuilder() {
+      const cd = State.customDrink;
+      const totalBase = cd.sizeBase + cd.milkBase + cd.shotsBase + cd.addons.reduce((s, a) => s + a.base, 0);
+
+      const tempLabel = cd.temp === 'hot' ? 'Hot' : 'Iced';
+      document.getElementById('custom-drink-name').textContent = `${cd.size} ${tempLabel} ${cd.milk} Latte`;
+      
+      const specs = [
+        tempLabel,
+        cd.shots,
+        `${cd.milk} milk`,
+        ...cd.addons.map(a => a.name)
+      ].join(' · ');
+
+      document.getElementById('custom-drink-specs').textContent = specs;
+      document.getElementById('custom-drink-price').textContent = formatPrice(totalBase);
+
+      // Update Customizer pill prices
+      document.querySelectorAll('#builder-size-options .option-pill-btn').forEach(btn => {
+        const base = parseFloat(btn.getAttribute('data-base'));
+        const pillPrice = btn.querySelector('.pill-price');
+        if (pillPrice) pillPrice.textContent = formatPrice(base);
+      });
+
+      document.querySelectorAll('#builder-milk-options .option-pill-btn').forEach(btn => {
+        const base = parseFloat(btn.getAttribute('data-base'));
+        const pillPrice = btn.querySelector('.pill-price');
+        if (pillPrice && base > 0) pillPrice.textContent = formatPrice(base);
+      });
+
+      document.querySelectorAll('#builder-shot-options .option-pill-btn').forEach(btn => {
+        const base = parseFloat(btn.getAttribute('data-base'));
+        const pillPrice = btn.querySelector('.pill-price');
+        if (pillPrice && base > 0) pillPrice.textContent = formatPrice(base);
+      });
+
+      document.querySelectorAll('.addon-check-label').forEach(label => {
+        const cb = label.querySelector('.builder-addon-cb');
+        const priceTag = label.querySelector('.addon-price');
+        if (cb && priceTag) {
+          const base = parseFloat(cb.getAttribute('data-base'));
+          priceTag.textContent = `+${formatPrice(base)}`;
+        }
+      });
+
+      // Live Stats
+      let mg = 130;
+      if (cd.shots === 'Single') mg = 65;
+      if (cd.shots === 'Triple') mg = 195;
+      if (cd.shots === 'Decaf') mg = 4;
+      document.getElementById('vibe-caffeine-val').textContent = `${mg} mg`;
+
+      let focus = '96% (Exam Mode)';
+      if (cd.shots === 'Triple') focus = '100% (Maximum Overdrive)';
+      if (cd.shots === 'Decaf') focus = 'Pure Zen Chill';
+      document.getElementById('vibe-focus-val').textContent = focus;
+
+      // Toggle Cup SVG
+      const icedCup = document.getElementById('custom-cup-svg-iced');
+      const hotCup = document.getElementById('custom-cup-svg-hot');
+
+      if (cd.temp === 'hot') {
+        icedCup.style.display = 'none';
+        hotCup.style.display = 'block';
+      } else {
+        icedCup.style.display = 'block';
+        hotCup.style.display = 'none';
+
+        const milkLayer = document.getElementById('cup-milk-layer');
+        const espressoLayer = document.getElementById('cup-espresso-layer');
+        const drizzleLayer = document.getElementById('cup-drizzle-layer');
+
+        if (cd.milk === 'Pistachio') milkLayer.setAttribute('fill', '#D8F3DC');
+        else if (cd.milk === 'Almond') milkLayer.setAttribute('fill', '#EFE9DE');
+        else milkLayer.setAttribute('fill', '#FAF7F2');
+
+        if (cd.shots === 'Single') {
+          espressoLayer.setAttribute('fill', '#8B5A2B');
+          espressoLayer.setAttribute('opacity', '0.75');
+        } else if (cd.shots === 'Double') {
+          espressoLayer.setAttribute('fill', '#6F4E37');
+          espressoLayer.setAttribute('opacity', '0.9');
+        } else if (cd.shots === 'Triple') {
+          espressoLayer.setAttribute('fill', '#3A1F13');
+          espressoLayer.setAttribute('opacity', '1');
+        } else {
+          espressoLayer.setAttribute('fill', '#7E523A');
+          espressoLayer.setAttribute('opacity', '0.8');
+        }
+
+        const hasDrizzle = cd.addons.some(a => a.name.includes('Caramel') || a.name.includes('Lavender'));
+        drizzleLayer.style.display = hasDrizzle ? 'block' : 'none';
+      }
+    }
+
+    function addCustomDrinkToCart() {
+      const cd = State.customDrink;
+      const totalBase = cd.sizeBase + cd.milkBase + cd.shotsBase + cd.addons.reduce((s, a) => s + a.base, 0);
+      const tempLabel = cd.temp === 'hot' ? 'Hot' : 'Iced';
+      const name = `Custom ${cd.size} ${tempLabel} ${cd.milk} Drink`;
+      const details = `${cd.shots} shot · ${cd.addons.map(a => a.name).join(', ') || 'No add-ons'}`;
+
+      addToCart('custom-drink-' + Date.now(), name, totalBase, details);
+      openDrawer();
+    }
+
+    /* Loyalty Stamp Card */
+    function renderStampCard() {
+      const slots = document.querySelectorAll('.stamp-slot');
+      document.getElementById('stamps-count-text').textContent = `${State.stamps} / 8 stamped`;
+
+      slots.forEach((slot, idx) => {
+        const index = idx + 1;
+        if (index <= State.stamps) slot.classList.add('stamped');
+        else slot.classList.remove('stamped');
+      });
+
+      const freeAlert = document.getElementById('free-drink-alert');
+      freeAlert.style.display = State.stamps >= 8 ? 'block' : 'none';
+    }
+
+    function punchDemoStamp() {
+      if (State.stamps < 8) {
+        State.stamps += 1;
+        audio.playPunch();
+        State.saveStamps();
+        showToast(`Stamp #${State.stamps} punched!`, '🎟️');
+        if (State.stamps === 8) {
+          triggerConfetti();
+          audio.playChime();
+        }
+      } else {
+        showToast('You have all 8 stamps! Claim your free drink!', '🎉');
+      }
+    }
+
+    function resetStamps() {
+      State.stamps = 0;
+      State.saveStamps();
+      showToast('Stamp card reset', '🔄');
+    }
+
+    /* Confetti Burst */
+    function triggerConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#FF6B8B', '#FFD166', '#43AA8B', '#CDB4DB', '#20150F', '#FAF7F2'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.5) * 16 - 4,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 8
+        });
+      }
+
+      let frame = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.rotation += p.rotSpeed;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+        });
+
+        frame++;
+        if (frame < 120) requestAnimationFrame(animate);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      requestAnimationFrame(animate);
+    }
+
+    /* Slap Sticker */
+    function slapSticker(text, colorClass) {
+      audio.playPop();
+      const canvas = document.getElementById('slapped-stickers-canvas');
+      const sticker = document.createElement('div');
+      sticker.className = `sticker ${colorClass} slapped-sticker`;
+      sticker.textContent = text;
+
+      const randX = Math.max(20, Math.min(window.innerWidth - 180, window.innerWidth / 2 + (Math.random() - 0.5) * 320));
+      const randY = Math.max(80, Math.min(window.innerHeight - 80, window.innerHeight / 2 + (Math.random() - 0.5) * 260));
+      const randRot = (Math.random() - 0.5) * 30;
+
+      sticker.style.left = `${randX}px`;
+      sticker.style.top = `${randY}px`;
+      sticker.style.transform = `rotate(${randRot}deg)`;
+
+      let isDragging = false;
+      let startX, startY, initLeft, initTop;
+
+      const onMouseDown = (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        initLeft = parseInt(sticker.style.left, 10);
+        initTop = parseInt(sticker.style.top, 10);
+        sticker.style.zIndex = '999';
+        e.preventDefault();
+      };
+
+      const onMouseMove = (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        sticker.style.left = `${initLeft + dx}px`;
+        sticker.style.top = `${initTop + dy}px`;
+      };
+
+      const onMouseUp = () => {
+        if (isDragging) {
+          isDragging = false;
+          audio.playPop();
+        }
+      };
+
+      sticker.addEventListener('mousedown', onMouseDown);
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+
+      canvas.appendChild(sticker);
+      showToast(`Sticker slapped! Drag it anywhere`, '🏷️');
+    }
+
+    /* Initialization */
+    document.addEventListener('DOMContentLoaded', () => {
+      // 0. Probe the backend, then load the live menu if available (sets `backendOnline` + `menuCache`)
+      probeBackend().then(loadMenuFromBackend).then(() => { renderMenu(); });
+
+
+      // 1. Theme
+      if (State.theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('sun-icon').style.display = 'none';
+        document.getElementById('moon-icon').style.display = 'block';
+      }
+
+      document.getElementById('theme-toggle-btn').addEventListener('click', () => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+          document.documentElement.removeAttribute('data-theme');
+          State.theme = 'light';
+          document.getElementById('sun-icon').style.display = 'block';
+          document.getElementById('moon-icon').style.display = 'none';
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          State.theme = 'dark';
+          document.getElementById('sun-icon').style.display = 'none';
+          document.getElementById('moon-icon').style.display = 'block';
+        }
+        localStorage.setItem('ovr_theme', State.theme);
+        audio.playPop();
+      });
+
+      // 2. Sound
+      const soundBtn = document.getElementById('sound-toggle-btn');
+      const soundOn = document.getElementById('sound-icon-on');
+      const soundOff = document.getElementById('sound-icon-off');
+
+      if (!State.sound) {
+        audio.enabled = false;
+        soundOn.style.display = 'none';
+        soundOff.style.display = 'block';
+      }
+
+      soundBtn.addEventListener('click', () => {
+        audio.enabled = !audio.enabled;
+        State.sound = audio.enabled;
+        localStorage.setItem('ovr_sound', State.sound.toString());
+        if (audio.enabled) {
+          soundOn.style.display = 'block';
+          soundOff.style.display = 'none';
+          audio.playPop();
+          showToast('Sound effects enabled', '🔊');
+        } else {
+          soundOn.style.display = 'none';
+          soundOff.style.display = 'block';
+          showToast('Sound effects muted', '🔇');
+        }
+      });
+
+      // 3. Currency Selector Listener
+      const currSelect = document.getElementById('currency-select');
+      currSelect.value = State.currency;
+      currSelect.addEventListener('change', (e) => {
+        State.currency = e.target.value;
+        localStorage.setItem('ovr_currency', State.currency);
+        audio.playPop();
+        renderMenu();
+        renderMoodSuggestions(State.currentMood);
+        updateDrinkBuilder();
+        updateCartUI();
+        showToast(`Currency changed to ${CURRENCIES[State.currency].label}`, '💱');
+      });
+
+      // 4. Language Selector Listener
+      const langSelect = document.getElementById('language-select');
+      langSelect.value = State.language;
+      langSelect.addEventListener('change', (e) => {
+        applyLanguage(e.target.value);
+        audio.playPop();
+        showToast(`Language set to ${langSelect.options[langSelect.selectedIndex].text}`, '🌐');
+      });
+
+      // 5. Initial Render with active language and currency
+      applyLanguage(State.language);
+
+      // Slappable Stickers
+      document.querySelectorAll('#sticker-bar .clickable-sticker').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.getAttribute('data-text');
+          let colorClass = 'sticker-yellow';
+          if (btn.classList.contains('sticker-pink')) colorClass = 'sticker-pink';
+          if (btn.classList.contains('sticker-matcha')) colorClass = 'sticker-matcha';
+          if (btn.classList.contains('sticker-lilac')) colorClass = 'sticker-lilac';
+          slapSticker(text, colorClass);
+        });
+      });
+
+      document.getElementById('btn-clear-stickers').addEventListener('click', () => {
+        document.getElementById('slapped-stickers-canvas').innerHTML = '';
+        showToast('All slapped stickers cleared', '🧹');
+      });
+
+      // Mood tabs
+      document.querySelectorAll('.mood-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.mood-btn').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
+          const mood = btn.getAttribute('data-mood');
+          renderMoodSuggestions(mood);
+          audio.playPop();
+        });
+      });
+
+      // Menu category tabs
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          State.activeCategory = btn.getAttribute('data-category');
+          renderMenu();
+          audio.playPop();
+        });
+      });
+
+      // Vegan toggle
+      const veganBtn = document.getElementById('vegan-filter-btn');
+      veganBtn.addEventListener('click', () => {
+        State.veganOnly = !State.veganOnly;
+        veganBtn.classList.toggle('active', State.veganOnly);
+        veganBtn.setAttribute('aria-pressed', State.veganOnly.toString());
+        renderMenu();
+        audio.playPop();
+      });
+
+      // Surprise me roulette
+      document.getElementById('btn-surprise-me').addEventListener('click', spinSurpriseMe);
+
+      // Search input
+      document.getElementById('menu-search-input').addEventListener('input', (e) => {
+        State.searchQuery = e.target.value;
+        renderMenu();
+      });
+
+      // Drawer Open/Close
+      document.getElementById('cart-drawer-trigger').addEventListener('click', openDrawer);
+      document.getElementById('btn-close-drawer').addEventListener('click', closeDrawer);
+      document.getElementById('btn-mobile-open-drawer').addEventListener('click', openDrawer);
+      document.getElementById('drawer-backdrop').addEventListener('click', (e) => {
+        if (e.target.id === 'drawer-backdrop') closeDrawer();
+      });
+
+      // Dog treat tip
+      const cbDogTip = document.getElementById('cb-dog-tip');
+      const dogBox = document.getElementById('dog-tip-box');
+      dogBox.addEventListener('click', (e) => {
+        if (e.target !== cbDogTip) cbDogTip.checked = !cbDogTip.checked;
+        State.dogTip = cbDogTip.checked;
+        if (State.dogTip) {
+          audio.playPop();
+          showToast('Waffles thanks you with a happy woof! 🐾', '🐶');
+        }
+        updateCartUI();
+      });
+
+      // Checkout
+      document.getElementById('btn-place-order').addEventListener('click', handleCheckout);
+      document.getElementById('btn-order-another').addEventListener('click', () => {
+        closeDrawer();
+      });
+
+      // Temperature Hot/Iced Buttons
+      document.getElementById('btn-temp-iced').addEventListener('click', () => {
+        State.customDrink.temp = 'iced';
+        document.getElementById('btn-temp-iced').classList.add('active');
+        document.getElementById('btn-temp-hot').classList.remove('active');
+        audio.playPop();
+        updateDrinkBuilder();
+      });
+
+      document.getElementById('btn-temp-hot').addEventListener('click', () => {
+        State.customDrink.temp = 'hot';
+        document.getElementById('btn-temp-hot').classList.add('active');
+        document.getElementById('btn-temp-iced').classList.remove('active');
+        audio.playPop();
+        updateDrinkBuilder();
+      });
+
+      // Drink builder option pills
+      document.querySelectorAll('.option-pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const type = btn.getAttribute('data-type');
+          const val = btn.getAttribute('data-val');
+          const base = parseFloat(btn.getAttribute('data-base'));
+
+          btn.parentElement.querySelectorAll('.option-pill-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          if (type === 'size') {
+            State.customDrink.size = val;
+            State.customDrink.sizeBase = base;
+          } else if (type === 'milk') {
+            State.customDrink.milk = val;
+            State.customDrink.milkBase = base;
+          } else if (type === 'shots') {
+            State.customDrink.shots = val;
+            State.customDrink.shotsBase = base;
+          }
+
+          audio.playPop();
+          updateDrinkBuilder();
+        });
+      });
+
+      // Add-on checkboxes
+      document.querySelectorAll('.builder-addon-cb').forEach(cb => {
+        cb.addEventListener('change', () => {
+          const name = cb.getAttribute('data-name');
+          const base = parseFloat(cb.getAttribute('data-base'));
+
+          if (cb.checked) {
+            State.customDrink.addons.push({ name, base });
+          } else {
+            State.customDrink.addons = State.customDrink.addons.filter(a => a.name !== name);
+          }
+          audio.playPop();
+          updateDrinkBuilder();
+        });
+      });
+
+      document.getElementById('btn-add-custom-drink').addEventListener('click', addCustomDrinkToCart);
+
+      // Loyalty actions
+      document.getElementById('btn-demo-stamp').addEventListener('click', punchDemoStamp);
+      document.getElementById('btn-reset-stamps').addEventListener('click', resetStamps);
+
+      // Copy Wi-Fi
+      document.getElementById('btn-copy-wifi').addEventListener('click', () => {
+        const pass = document.getElementById('wifi-pass-val').textContent;
+        navigator.clipboard.writeText(pass).then(() => {
+          showToast(t('copied'), '📋');
+          document.getElementById('btn-copy-wifi').textContent = t('copied');
+          setTimeout(() => {
+            document.getElementById('btn-copy-wifi').textContent = t('copy_pw');
+          }, 2000);
+        });
+      });
+
+      // Newsletter
+      document.getElementById('newsletter-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        document.getElementById('newsletter-feedback').style.display = 'block';
+        document.querySelector('.newsletter-form').style.display = 'none';
+        showToast('Subscribed to the newsletter!', '💌');
+      });
+    });
+  </script>
+</body>
+</html>
